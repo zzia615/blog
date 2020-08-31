@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = "用户登录";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+
+<style>
+    html, body {
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        background-image: url(/img/default.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+</style>
+}
+<el-card class="box-card" style="margin:100px auto;width:380px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
+        <el-form-item label="账号" prop="code">
+            <el-input v-model="form.code"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="pwd">
+            <el-input type="password" v-model="form.pwd"></el-input>
+        </el-form-item>
+        <el-form-item label="类别" prop="type">
+            <el-select v-model="form.type" placeholder="请选择类别">
+                <el-option label="管理员" value="1"></el-option>
+                <el-option label="其他" value="2"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item>
+            <el-checkbox v-model="form.remember">记住我</el-checkbox>
+        </el-form-item>
+
+        <el-form-item>
+            <el-button type="primary" @@click="onSubmit('form')">登录</el-button>
+            <el-button @@click="resetSubmit('form')">重置</el-button>
+        </el-form-item>
+    </el-form>
+</el-card>
+
+@section Scripts{
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    form: {
+                        code: '',
+                        pwd: '',
+                        type: '',
+                        remember: true
+                    },
+                    dialogLoading: false,
+                    rules: {
+                        code: [{
+                            required: true,
+                            message: '请输入账号',
+                            trigger: 'blur'
+                        }],
+                        pwd: [{
+                            required: true,
+                            message: '请输入密码',
+                            trigger: 'blur'
+                        }],
+                        type: [{
+                            required: true,
+                            message: '请选择类别',
+                            trigger: 'blur'
+                        }]
+                    }
+                }
+            },
+            methods: {
+                onSubmit(formName) {
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            this.dialogLoading = true;
+                            var url = "/User/LoginSys";
+                            var data = this.form;
+                            this.$http.post(url, data).then(res => {
+                                console.info(res);
+                                var resCode = res.body.code;
+                                var resMsg = res.body.msg;
+                                if (resCode != "0000") {
+                                    this.$message.error('登录失败，错误原因：' + resMsg);
+                                    return;
+                                }
+                                this.$message({
+                                    message: '登录成功',
+                                    type: 'success'
+                                });
+                                this.dialogLoading = false;
+                                window.location.href = "/Home/Index";
+                            }, err => {
+                                console.error(err);
+                                this.$message.error('请求异常');
+                                this.dialogLoading = false;
+                            });
+                        } else {
+                            return false;
+                        }
+                    });
+                },
+                resetSubmit(formName) {
+                    this.$refs[formName].resetFields();
+                }
+            }
+        });
+    </script>
+}

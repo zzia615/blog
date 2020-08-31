@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewBag.Title - 机房预约管理系统</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="~/css/ElementUI/element-ui.css">
+    @RenderSection("Styles", true)
+</head>
+<body>
+    <div id="app">
+        @RenderBody()
+    </div>
+</body>
+<!-- 先引入 Vue -->
+<script src="~/js/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="~/js/ElementUI/element-ui.js"></script>
+<script src="~/js/vue-resource.js"></script>
+@RenderSection("Scripts",true)
+</html>

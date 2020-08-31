@@ -1,4 +1,5 @@
-﻿using System;
+﻿using jyfangyy.Main.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,6 +12,12 @@ namespace jyfangyy.Main.Controllers
     /// </summary>
     public class UserController : Controller
     {
+        private readonly SqlDbContext dbContext;
+
+        public UserController()
+        {
+            this.dbContext = new SqlDbContext();
+        }
         /// <summary>
         /// 教师页面
         /// </summary>
@@ -52,8 +59,24 @@ namespace jyfangyy.Main.Controllers
         {
             var obj = new { code = "0000", msg = "" };
 
-            Session["user_code"] = code;
-            Session["user_type"] = type;
+            var user = dbContext.User.SingleOrDefault(a => a.code == code&&a.type==type);
+            if (user == null)
+            {
+                obj = new { code = "0001", msg = "用户信息不存在" };
+            }
+            else
+            {
+                if (user.pwd != pwd)
+                {
+                    obj = new { code = "0001", msg = "账号密码不匹配" };
+                }
+                else
+                {
+                    Session["user_code"] = code;
+                    Session["user_name"] = user.name;
+                    Session["user_type"] = type;
+                }
+            }
 
             return Json(obj);
         }
@@ -71,6 +94,17 @@ namespace jyfangyy.Main.Controllers
         public ActionResult ChangePwd(string pwd,string pwd_n)
         {
             var obj = new { code = "0000", msg = "" };
+            return Json(obj);
+        }
+        [HttpPost]
+
+        public ActionResult GetUserList(int pageIndex,int pageSize,string code,string name)
+        {
+            var data = dbContext.User.OrderBy(a=>a.name).Skip((pageIndex - 1)*pageSize).Take(pageSize).ToList();
+
+            var obj = new { code = "0000", msg = "", data = data, count = data.Count };
+
+
             return Json(obj);
         }
     }

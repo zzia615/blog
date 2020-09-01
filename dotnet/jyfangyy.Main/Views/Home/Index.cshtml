@@ -51,7 +51,7 @@
         <el-container style="position:absolute;top:60px;left:0;right:0; bottom:0px;">
             <el-aside width="220px" style="background-color: #3c4248;color:#fff">
                 <el-menu ref="menu2" :default-active="activeIndex2"
-                         :default-openeds="['2']"
+                         :default-openeds="['1']"
                          background-color="#3c4248"
                          text-color="#fff"
                          active-text-color="#ffd04b"
@@ -75,10 +75,43 @@
                         <el-menu-item index="2-4">个人学习预约审核</el-menu-item>
                     </el-submenu>
 
+                    <el-submenu index="3">
+                        <template slot="title">
+                            <i class="el-icon-reading"></i>信息查询
+                        </template>
+                        <el-menu-item index="3-1">机房排课情况查询</el-menu-item>
+                        <el-menu-item index="3-2">机房使用情况查询</el-menu-item>
+                    </el-submenu>
+
+                    <el-submenu index="4">
+                        <template slot="title">
+                            <i class="el-icon-reading"></i>失物管理
+                        </template>
+                        <el-menu-item index="4-1">失物信息发布</el-menu-item>
+                        <el-menu-item index="4-2">失物招领</el-menu-item>
+                    </el-submenu>
+
+                    <el-submenu index="5">
+                        <template slot="title">
+                            <i class="el-icon-reading"></i>破损管理
+                        </template>
+                        <el-menu-item index="5-1">设备破损信息发布</el-menu-item>
+                    </el-submenu>
+
+
+
+                    <el-submenu index="6">
+                        <template slot="title">
+                            <i class="el-icon-reading"></i>数据维护
+                        </template>
+                        <el-menu-item index="6-1">楼层信息维护</el-menu-item>
+                        <el-menu-item index="6-2">机房信息维护</el-menu-item>
+                        <el-menu-item index="6-3">设备信息维护</el-menu-item>
+                    </el-submenu>
                 </el-menu>
             </el-aside>
             <el-main style="padding:0px;overflow-y:hidden;">
-                <iframe style="width:100%;height:100%;border:none;" name="_mainFrame"></iframe>
+                <iframe :src="mainFrameUrl" style="width:100%;height:100%;border:none;" name="_mainFrame"></iframe>
             </el-main>
         </el-container>
 
@@ -114,6 +147,7 @@
                 activeIndex2: "0",
                 dialogFormVisible: false,
                 dialogLoading: false,
+                mainFrameUrl:"",
                 form: {
                     pwd: "",
                     pwd_n: ""
@@ -148,6 +182,7 @@
                             var resMsg = res.body.msg;
                             if (resCode != "0000") {
                                 this.$message.error("修改密码失败，错误原因:" + resMsg);
+                                this.dialogLoading = false;
                                 return;
                             }
 
@@ -192,7 +227,13 @@
                 console.info(index);
                 switch (index) {
                     case "1-1"://学生信息管理
-                        this.openUrl("/User/Student", "_mainFrame");
+                        this.mainFrameUrl = "/User/Student";
+                        break;
+                    case "1-2"://教师信息管理
+                        this.mainFrameUrl = "/User/Teacher";
+                        break;
+                    case "1-3"://管理员信息管理
+                        this.mainFrameUrl = "/User/Admin";
                         break;
                 }
             },
@@ -204,7 +245,7 @@
             }
         },
         mounted() {
-            this.openUrl("http://baidu.com", "_mainFrame");
+            this.mainFrameUrl = "/User/Student";
         }
     });
 </script>

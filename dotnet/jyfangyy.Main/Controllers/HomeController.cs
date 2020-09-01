@@ -10,6 +10,10 @@ namespace jyfangyy.Main.Controllers
     {
         public ActionResult Index()
         {
+            if (string.IsNullOrEmpty(Session["user_code"].AsString()))
+            {
+                return RedirectToAction("Login", "User");
+            }
             return View();
         }
 

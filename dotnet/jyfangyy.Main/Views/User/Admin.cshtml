@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "学生信息维护";
+    ViewBag.Title = "管理员信息维护";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -23,8 +23,8 @@
     </el-col>
     <el-col>
         <el-card class="box-card" style="height:80px">
-            <el-form ref="form" :inline="true" :model="formQuery" label-width="50px">
-                <el-form-item label="学号" prop="code_q">
+            <el-form ref="form" :inline="true" :model="formQuery" label-width="60px">
+                <el-form-item label="编号" prop="code_q">
                     <el-input v-model="formQuery.code_q"></el-input>
                 </el-form-item>
                 <el-form-item label="姓名" prop="name_q">
@@ -40,15 +40,11 @@
     <el-col>
         <el-card class="box-card">
             <el-table :data="tableData3" height="400px" border style="width: 100%">
-                <el-table-column prop="code" label="学号" width="100">
+                <el-table-column prop="code" label="编号" width="100">
                 </el-table-column>
                 <el-table-column prop="name" label="姓名" width="100">
                 </el-table-column>
                 <el-table-column prop="sex_n" label="性别" width="100">
-                </el-table-column>
-                <el-table-column prop="grade" label="年级" width="130">
-                </el-table-column>
-                <el-table-column prop="major" label="专业" width="150">
                 </el-table-column>
                 <el-table-column prop="type_n" label="类别">
                 </el-table-column>
@@ -70,7 +66,7 @@
 
 <el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
-        <el-form-item label="学号" prop="code">
+        <el-form-item label="编号" prop="code">
             <el-input v-model="form.code" :disabled="editMode"></el-input>
         </el-form-item>
         <el-form-item label="姓名" prop="name">
@@ -84,12 +80,6 @@
                 <el-radio label="1" border>男</el-radio>
                 <el-radio label="2" border>女</el-radio>
             </el-radio-group>
-        </el-form-item>
-        <el-form-item label="年级" prop="grade">
-            <el-input v-model="form.grade"></el-input>
-        </el-form-item>
-        <el-form-item label="专业" prop="major">
-            <el-input v-model="form.major"></el-input>
         </el-form-item>
         <el-form-item>
             <el-button type="primary" @@click="onSubmit('form')">保存</el-button>
@@ -109,7 +99,7 @@
                     pageSize: 10,
                     currentPage: 4,
                     dialogFormVisible: false,
-                    dialogTitle: "新增用户",
+                    dialogTitle: "新增管理员",
                     editMode: false,
                     fullscreenLoading: false,
                     dialogLoading: false,
@@ -129,7 +119,7 @@
                     rules: {
                         code: [{
                             required: true,
-                            message: '请输入学号',
+                            message: '请输入编号',
                             trigger: 'blur'
                         }],
                         name: [{
@@ -146,16 +136,6 @@
                             required: true,
                             message: '请选择类别',
                             trigger: 'blur'
-                        }],
-                        grade: [{
-                            required: true,
-                            message: '请输入年级',
-                            trigger: 'blur'
-                        }],
-                        major: [{
-                            required: true,
-                            message: '请输入专业',
-                            trigger: 'blur'
                         }]
                     }
                 }
@@ -167,7 +147,7 @@
                 },
                 addUser() {
                     this.editMode = false;
-                    this.dialogTitle = "新增学生";
+                    this.dialogTitle = "新增管理员";
                     this.dialogFormVisible = true;
                     this.form = {
                         name: '',
@@ -185,7 +165,7 @@
                             this.dialogLoading = true;
                             var url = "/User/Save";
                             var data = this.form;
-                            data.type = "3";
+                            data.type = "1";
                             if (this.editMode) {
                                 data.action = "editUser";
                             } else {
@@ -226,7 +206,7 @@
                         pageSize: pageSize,
                         code: this.formQuery.code_q,
                         name: this.formQuery.name_q,
-                        type: "3"
+                        type: "1"
                     };
                     this.$http.post(url, data).then(res => {
                         this.tableData3 = res.body.data;
@@ -247,10 +227,10 @@
                     if (mode == "edit") {
                         this.editMode = true;
                         this.dialogFormVisible = true;
-                        this.dialogTitle = "修改学生";
+                        this.dialogTitle = "修改管理员";
                         this.form = row;
                     } else {
-                        this.$confirm('此操作将永久删除学生信息, 是否继续?', '提示', {
+                        this.$confirm('此操作将永久删除管理员信息, 是否继续?', '提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
                             type: 'warning'

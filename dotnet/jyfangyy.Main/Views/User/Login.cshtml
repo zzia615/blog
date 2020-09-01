@@ -21,7 +21,7 @@
     }
 </style>
 }
-<el-card class="box-card" style="margin:100px auto;width:380px">
+<el-card class="box-card" style="margin:100px auto;width:360px">
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
         <el-form-item label="账号" prop="code">
             <el-input v-model="form.code"></el-input>
@@ -30,7 +30,7 @@
             <el-input type="password" v-model="form.pwd"></el-input>
         </el-form-item>
         <el-form-item label="类别" prop="type">
-            <el-select v-model="form.type" placeholder="请选择类别">
+            <el-select v-model="form.type" placeholder="请选择类别" style="width:100%">
                 <el-option label="管理员" value="1"></el-option>
                 <el-option label="教师" value="2"></el-option>
                 <el-option label="学生" value="3"></el-option>

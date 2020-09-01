@@ -51,5 +51,43 @@ namespace jyfangyy.Main.Models
         [Required]
         [StringLength(10)]
         public string type { get; set; }
+        [NotMapped]
+        public string sex_n
+        {
+            get
+            {
+                if (sex == "1")
+                {
+                    return "男";
+                }
+                else
+                {
+                    return "女";
+                }
+            }
+        }
+
+        [NotMapped]
+        public string type_n
+        {
+            get
+            {
+                if (type == "1")
+                {
+                    return "管理员";
+                }
+                else if (type == "2")
+                {
+                    return "教师";
+                }
+                else
+                {
+                    return "学生";
+                }
+            }
+        }
+        [NotMapped]
+        public string action { get; set; }
+
     }
 }

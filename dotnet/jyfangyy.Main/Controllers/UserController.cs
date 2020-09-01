@@ -167,13 +167,20 @@ namespace jyfangyy.Main.Controllers
         [HttpPost]
         public ActionResult Delete(string code)
         {
+            var obj = new { code = "0000", msg = "" };
             //查询用户数据
             var user = dbContext.User.SingleOrDefault(a => a.code == code);
-            //删除数据
-            dbContext.Entry(user).State = System.Data.Entity.EntityState.Deleted;
-            dbContext.SaveChanges();
+            if (user == null)
+            {
+                obj = new { code = "0001", msg = "用户信息不存在" };
+            }
+            else
+            {
+                //删除数据
+                dbContext.Entry(user).State = System.Data.Entity.EntityState.Deleted;
+                dbContext.SaveChanges();
+            }
             //返回数据
-            var obj = new { code = "0000", msg = "" };
             return Json(obj);
         }
         /// <summary>

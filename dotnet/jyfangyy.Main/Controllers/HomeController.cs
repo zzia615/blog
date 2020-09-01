@@ -16,19 +16,20 @@ namespace jyfangyy.Main.Controllers
             }
             return View();
         }
-
-        public ActionResult About()
+        /// <summary>
+        /// 校验是否登录
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult CheckLogin()
         {
-            ViewBag.Message = "Your application description page.";
+            var obj = new { code = "0000", msg = "" };
+            if (string.IsNullOrEmpty(Session["user_code"].AsString()))
+            {
+                obj = new { code = "0001", msg = "用户未登录" };
+            }
 
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return Json(obj);
         }
     }
 }

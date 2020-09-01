@@ -14,5 +14,8 @@ namespace jyfangyy.Main.Data
         }
 
         public DbSet<User> User { get; set; }
+        public DbSet<Device> Device { get; set; }
+        public DbSet<Laboratory> Laboratory { get; set; }
+        public DbSet<Storey> Storey { get; set; }
     }
 }

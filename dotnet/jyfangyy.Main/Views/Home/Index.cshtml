@@ -147,7 +147,7 @@
                 activeIndex2: "0",
                 dialogFormVisible: false,
                 dialogLoading: false,
-                mainFrameUrl:"",
+                mainFrameUrl: "",
                 form: {
                     pwd: "",
                     pwd_n: ""
@@ -204,38 +204,65 @@
                 });
             },
             handleTopNavSelect(index) {
-                this.$refs["menu2"].activeIndex = null;
-                console.info(index);
-                switch (index) {
-                    case "2"://首页
-                        break;
-                    case "3-1": //修改密码
-                        this.form = {
-                            pwd: "",
-                            pwd_n: ""
-                        };
-                        this.dialogFormVisible = true;
-                        break;
-                    case "3-2": //退出
-                        this.openUrl("/User/LogoutSys");
-                        break;
-                }
-
+                var url = "/Home/CheckLogin";
+                this.$http.post(url).then(res => {
+                    var resCode = res.body.code;
+                    var resMsg = res.body.msg;
+                    if (resCode != "0000") {
+                        this.$message.error(resMsg);
+                        this.openUrl("/");
+                        return;
+                    }
+                    this.$refs["menu2"].activeIndex = null;
+                    console.info(index);
+                    switch (index) {
+                        case "2"://首页
+                            break;
+                        case "3-1": //修改密码
+                            this.form = {
+                                pwd: "",
+                                pwd_n: ""
+                            };
+                            this.dialogFormVisible = true;
+                            break;
+                        case "3-2": //退出
+                            this.openUrl("/User/LogoutSys");
+                            break;
+                    }
+                }, err => {
+                    console.error(err);
+                    this.$message.error("请求异常");
+                    this.openUrl("/");
+                });
             },
             handleLeftNavSelect(index) {
-                this.$refs["menu1"].activeIndex = null;
-                console.info(index);
-                switch (index) {
-                    case "1-1"://学生信息管理
-                        this.mainFrameUrl = "/User/Student";
-                        break;
-                    case "1-2"://教师信息管理
-                        this.mainFrameUrl = "/User/Teacher";
-                        break;
-                    case "1-3"://管理员信息管理
-                        this.mainFrameUrl = "/User/Admin";
-                        break;
-                }
+                var url = "/Home/CheckLogin";
+                this.$http.post(url).then(res => {
+                    var resCode = res.body.code;
+                    var resMsg = res.body.msg;
+                    if (resCode != "0000") {
+                        this.$message.error(resMsg);
+                        this.openUrl("/");
+                        return;
+                    }
+                    this.$refs["menu1"].activeIndex = null;
+                    console.info(index);
+                    switch (index) {
+                        case "1-1"://学生信息管理
+                            this.mainFrameUrl = "/User/Student";
+                            break;
+                        case "1-2"://教师信息管理
+                            this.mainFrameUrl = "/User/Teacher";
+                            break;
+                        case "1-3"://管理员信息管理
+                            this.mainFrameUrl = "/User/Admin";
+                            break;
+                    }
+                }, err => {
+                    console.error(err);
+                    this.$message.error("请求异常");
+                    this.openUrl("/");
+                });
             },
             openUrl(url, target) {
                 if (target == undefined) {

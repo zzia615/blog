@@ -23,6 +23,10 @@ namespace jyfangyy.Main.Models
         [StringLength(100)]
         public string name { get; set; }
         /// <summary>
+        /// 状态 1占用 0空闲 9损坏
+        /// </summary>
+        public int status { get; set; }
+        /// <summary>
         /// 所属实验室编码
         /// </summary>
         [Required]

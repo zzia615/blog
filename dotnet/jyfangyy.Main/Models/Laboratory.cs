@@ -28,7 +28,7 @@ namespace jyfangyy.Main.Models
         /// </summary>
         public int max_num { get; set; }
         /// <summary>
-        /// 实验室状态 1占用 0空闲
+        /// 实验室状态 1占用 0正常
         /// </summary>
         public int status { get; set; }
         /// <summary>

@@ -32,5 +32,6 @@ namespace jyfangyy.Main.Data
         public DbSet<Device> Device { get; set; }
         public DbSet<Laboratory> Laboratory { get; set; }
         public DbSet<Storey> Storey { get; set; }
+        public DbSet<LabApply> LabApply { get; set; }
     }
 }

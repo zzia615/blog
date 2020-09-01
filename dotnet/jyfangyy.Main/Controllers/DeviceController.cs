@@ -43,6 +43,7 @@ namespace jyfangyy.Main.Controllers
             }
             else
             {
+                //查询实验室
                 var lab = dbContext.Laboratory.SingleOrDefault(a => a.code == device.laboratory_code);
                 if (lab == null)
                 {
@@ -50,7 +51,9 @@ namespace jyfangyy.Main.Controllers
                 }
                 else
                 {
+                    //查询实验室已有设备数量
                     int count = dbContext.Device.Where(a => a.laboratory_code == device.laboratory_code).Count();
+                    //超出则提醒用户
                     if (lab.max_num <= count)
                     {
                         obj = new { code = "0002", msg = "实验室能容设备的最大数量超出" };

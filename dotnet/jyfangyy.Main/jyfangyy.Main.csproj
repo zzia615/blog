@@ -131,6 +131,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LabApplyController.cs" />
     <Compile Include="Controllers\LaboratoryController.cs" />
     <Compile Include="Controllers\StoreyController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -141,6 +142,7 @@
     </Compile>
     <Compile Include="Controllers\DeviceController.cs" />
     <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\LabApply.cs" />
     <Compile Include="Models\Laboratory.cs" />
     <Compile Include="Models\Storey.cs" />
     <Compile Include="Models\User.cs" />
@@ -189,6 +191,7 @@
     <Content Include="Views\Storey\Index.cshtml" />
     <Content Include="Views\Laboratory\Index.cshtml" />
     <Content Include="Views\Device\Index.cshtml" />
+    <Content Include="Views\LabApply\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

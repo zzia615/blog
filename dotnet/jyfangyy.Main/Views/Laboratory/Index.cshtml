@@ -1,0 +1,293 @@
+﻿
+@{
+    ViewBag.Title = "实验室信息维护";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+    <style>
+        .box-card {
+            margin-bottom: 3px;
+        }
+    </style>
+}
+
+<el-row v-loading.fullscreen.lock="fullscreenLoading">
+    <el-col>
+        <el-card class="box-card">
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>@ViewBag.Title</el-breadcrumb-item>
+            </el-breadcrumb>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card" style="height:80px">
+            <el-form ref="form" :inline="true" :model="formQuery" label-width="50px">
+                <el-form-item label="编号" prop="code_q">
+                    <el-input v-model="formQuery.code_q"></el-input>
+                </el-form-item>
+                <el-form-item label="名称" prop="name_q">
+                    <el-input v-model="formQuery.name_q"></el-input>
+                </el-form-item>
+                <el-form-item label="楼层" prop="storey_code_q">
+                    <el-select v-model="formQuery.storey_code_q" placeholder="请选择楼层" style="width:100%">
+                        <el-option v-for="(item,index) in storeyList" :label="item.name" :value="item.code"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @@click="queryLaboratory">查询</el-button>
+                    <el-button @@click="addLaboratory">新增</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card">
+            <el-table :data="tableData3" height="400px" border style="width: 100%">
+                <el-table-column prop="code" label="编号" width="100">
+                </el-table-column>
+                <el-table-column prop="name" label="名称">
+                </el-table-column>
+                <el-table-column prop="storey_name" label="楼层" width="100">
+                </el-table-column>
+                <el-table-column prop="max_num" label="设备数" width="100">
+                </el-table-column>
+                <el-table-column fixed="right" label="操作" width="160">
+                    <template slot-scope="scope">
+                        <el-button @@click="handleClick(scope.row,'edit')" type="primary" plain size="small">编辑</el-button>
+                        <el-button @@click="handleClick(scope.row,'delete')" type="danger" plain size="small">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination background layout="prev, pager, next" :total="totalNum" :page-size="pageSize" :current-page="currentPage"
+                           @@current-change="handleCurrentChanged">
+            </el-pagination>
+        </el-card>
+    </el-col>
+</el-row>
+
+
+
+<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
+        <el-form-item label="编号" prop="code">
+            <el-input v-model="form.code" :disabled="editMode"></el-input>
+        </el-form-item>
+        <el-form-item label="名称" prop="name">
+            <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="楼层" prop="storey_code">
+            <el-select v-model="form.storey_code" placeholder="请选择楼层" style="width:100%">
+                <el-option v-for="(item,index) in storeyList" :label="item.name" :value="item.code"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="设备数" prop="max_num">
+            <el-input-number v-model="form.max_num" :min="0" :max="9999"></el-input-number>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @@click="onSubmit('form')">保存</el-button>
+            <el-button @@click="dialogFormVisible=false">取消</el-button>
+        </el-form-item>
+    </el-form>
+</el-dialog>
+
+@section Scripts{
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                tableData3: [],
+                totalNum: 100,
+                pageSize: 10,
+                currentPage: 4,
+                dialogFormVisible: false,
+                dialogTitle: "新增实验室",
+                editMode: false,
+                fullscreenLoading: false,
+                dialogLoading: false,
+                storeyList: [],
+                form: {
+                    name: '',
+                    code: '',
+                    storey_code: '',
+                    max_num:0
+                },
+                formQuery: {
+                    name_q: '',
+                    code_q: '',
+                    storey_code_q:''
+                },
+                rules: {
+                    code: [{
+                        required: true,
+                        message: '请输入编号',
+                        trigger: 'blur'
+                    }],
+                    name: [{
+                        required: true,
+                        message: '请输入名称',
+                        trigger: 'blur'
+                    }],
+                    storey_code: [{
+                        required: true,
+                        message: '请选择楼层',
+                        trigger: 'blur'
+                    }]
+                }
+            }
+        },
+        methods: {
+            queryLaboratory() {
+                this.fullscreenLoading = true;
+                this.getData(1, this.pageSize);
+            },
+            addLaboratory() {
+                this.editMode = false;
+                this.dialogTitle = "新增实验室";
+                this.dialogFormVisible = true;
+                this.form = {
+                    name: '',
+                    code: '',
+                    storey_code: '',
+                    max_num: 0
+                };
+            },
+            onSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.dialogLoading = true;
+                        var url = "/Laboratory/Save";
+                        var data = this.form;
+                        if (this.editMode) {
+                            data.action = "editLaboratory";
+                        } else {
+                            data.action = "addLaboratory";
+                        }
+
+                        for (var s in this.storeyList) {
+                            if (this.storeyList[s].code == data.storey_code) {
+                                data.storey_name = this.storeyList[s].name;
+                                break;
+                            }
+                        }
+
+                        this.$http.post(url, data).then(res => {
+                            console.info(res);
+                            this.$message({
+                                message: '保存成功',
+                                type: 'success'
+                            });
+                            this.dialogFormVisible = false;
+                            this.dialogLoading = false;
+                            this.fullscreenLoading = true;
+                            this.getData(this.currentPage, this.pageSize);
+                        }, err => {
+                            console.error(err);
+                            this.$message.error('请求异常');
+                            this.dialogLoading = false;
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            resetSubmit(formName) {
+                this.$refs[formName].resetFields();
+            },
+            handleCurrentChanged(val) {
+                this.currentPage = val;
+                this.getData(this.currentPage, this.pageSize);
+            },
+            getData(pageIndex, pageSize) {
+                console.info(pageIndex + " " + pageSize);
+                var url = "/Laboratory/GetLaboratoryList";
+                var data = {
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    code: this.formQuery.code_q,
+                    name: this.formQuery.name_q,
+                    storey_code: this.formQuery.storey_code_q
+                };
+                this.$http.post(url, data).then(res => {
+                    this.tableData3 = res.body.data;
+                    this.totalNum = res.body.count;
+                    this.currentPage = pageIndex;
+
+                    this.fullscreenLoading = false;
+                }, err => {
+                    console.error(err);
+                    this.$message.error('请求异常');
+                    this.fullscreenLoading = false;
+
+                });
+
+            },
+            handleClick(row, mode) {
+                var code = row.code;
+                if (mode == "edit") {
+                    this.editMode = true;
+                    this.dialogFormVisible = true;
+                    this.dialogTitle = "修改实验室";
+                    this.form = row;
+                } else {
+                    this.$confirm('此操作将永久删除实验室信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.fullscreenLoading = true;
+                        var url = "/Laboratory/Delete";
+                        var data = {
+                            code: code
+                        };
+                        this.$http.post(url, data).then(res => {
+                            console.info(res);
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.currentPage, this.pageSize);
+                            this.fullscreenLoading = false;
+                        }, err => {
+                            this.fullscreenLoading = false;
+                            console.error(err);
+                            this.$message.error('请求异常');
+                        });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+                }
+            }
+        },
+        created() {
+            this.fullscreenLoading = true;
+            this.getData(1, this.pageSize);
+            var url = "/Storey/GetStoreyList";
+            var data = {
+                pageIndex:1,
+                pageSize:99999
+            };
+            this.$http.post(url, data).then(res => {
+                var resCode = res.body.code;
+                var resMsg = res.body.msg;
+                if (resCode != "0000") {
+                    this.fullscreenLoading = false;
+                    this.$message.error("获取楼层信息失败，错误原因："+resMsg);
+                    return;
+                }
+                this.storeyList = res.body.data;
+                this.fullscreenLoading = false;
+            }, err => {
+                this.fullscreenLoading = false;
+                console.error(err);
+                this.$message.error('请求异常');
+            });
+        }
+    });
+</script>
+}

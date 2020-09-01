@@ -1,0 +1,236 @@
+﻿
+@{
+    ViewBag.Title = "楼层信息维护";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+    <style>
+        .box-card {
+            margin-bottom: 3px;
+        }
+    </style>
+}
+
+<el-row v-loading.fullscreen.lock="fullscreenLoading">
+    <el-col>
+        <el-card class="box-card">
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>@ViewBag.Title</el-breadcrumb-item>
+            </el-breadcrumb>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card" style="height:80px">
+            <el-form ref="form" :inline="true" :model="formQuery" label-width="50px">
+                <el-form-item label="编号" prop="code_q">
+                    <el-input v-model="formQuery.code_q"></el-input>
+                </el-form-item>
+                <el-form-item label="名称" prop="name_q">
+                    <el-input v-model="formQuery.name_q"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @@click="queryStorey">查询</el-button>
+                    <el-button @@click="addStorey">新增</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card">
+            <el-table :data="tableData3" height="400px" border style="width: 100%">
+                <el-table-column prop="code" label="编号" width="100">
+                </el-table-column>
+                <el-table-column prop="name" label="名称">
+                </el-table-column>
+                <el-table-column fixed="right" label="操作" width="160">
+                    <template slot-scope="scope">
+                        <el-button @@click="handleClick(scope.row,'edit')" type="primary" plain size="small">编辑</el-button>
+                        <el-button @@click="handleClick(scope.row,'delete')" type="danger" plain size="small">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination background layout="prev, pager, next" :total="totalNum" :page-size="pageSize" :current-page="currentPage"
+                           @@current-change="handleCurrentChanged">
+            </el-pagination>
+        </el-card>
+    </el-col>
+</el-row>
+
+
+
+<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
+        <el-form-item label="编号" prop="code">
+            <el-input v-model="form.code" :disabled="editMode"></el-input>
+        </el-form-item>
+        <el-form-item label="名称" prop="name">
+            <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @@click="onSubmit('form')">保存</el-button>
+            <el-button @@click="dialogFormVisible=false">取消</el-button>
+        </el-form-item>
+    </el-form>
+</el-dialog>
+
+@section Scripts{
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    tableData3: [],
+                    totalNum: 100,
+                    pageSize: 10,
+                    currentPage: 4,
+                    dialogFormVisible: false,
+                    dialogTitle: "新增楼层",
+                    editMode: false,
+                    fullscreenLoading: false,
+                    dialogLoading: false,
+                    form: {
+                        name: '',
+                        code: ''
+                    },
+                    formQuery: {
+                        name_q: '',
+                        code_q: ''
+                    },
+                    rules: {
+                        code: [{
+                            required: true,
+                            message: '请输入编号',
+                            trigger: 'blur'
+                        }],
+                        name: [{
+                            required: true,
+                            message: '请输入名称',
+                            trigger: 'blur'
+                        }]
+                    }
+                }
+            },
+            methods: {
+                queryStorey() {
+                    this.fullscreenLoading = true;
+                    this.getData(1, this.pageSize);
+                },
+                addStorey() {
+                    this.editMode = false;
+                    this.dialogTitle = "新增楼层";
+                    this.dialogFormVisible = true;
+                    this.form = {
+                        name: '',
+                        code: ''
+                    };
+                },
+                onSubmit(formName) {
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            this.dialogLoading = true;
+                            var url = "/Storey/Save";
+                            var data = this.form;
+                            if (this.editMode) {
+                                data.action = "editStorey";
+                            } else {
+                                data.action = "addStorey";
+                            }
+                            this.$http.post(url, data).then(res => {
+                                console.info(res);
+                                this.$message({
+                                    message: '保存成功',
+                                    type: 'success'
+                                });
+                                this.dialogFormVisible = false;
+                                this.dialogLoading = false;
+                                this.fullscreenLoading = true;
+                                this.getData(this.currentPage, this.pageSize);
+                            }, err => {
+                                console.error(err);
+                                this.$message.error('请求异常');
+                                this.dialogLoading = false;
+                            });
+                        } else {
+                            return false;
+                        }
+                    });
+                },
+                resetSubmit(formName) {
+                    this.$refs[formName].resetFields();
+                },
+                handleCurrentChanged(val) {
+                    this.currentPage = val;
+                    this.getData(this.currentPage, this.pageSize);
+                },
+                getData(pageIndex, pageSize) {
+                    console.info(pageIndex + " " + pageSize);
+                    var url = "/Storey/GetStoreyList";
+                    var data = {
+                        pageIndex: pageIndex,
+                        pageSize: pageSize,
+                        code: this.formQuery.code_q,
+                        name: this.formQuery.name_q
+                    };
+                    this.$http.post(url, data).then(res => {
+                        this.tableData3 = res.body.data;
+                        this.totalNum = res.body.count;
+                        this.currentPage = pageIndex;
+
+                        this.fullscreenLoading = false;
+                    }, err => {
+                        console.error(err);
+                        this.$message.error('请求异常');
+                        this.fullscreenLoading = false;
+
+                    });
+
+                },
+                handleClick(row, mode) {
+                    var code = row.code;
+                    if (mode == "edit") {
+                        this.editMode = true;
+                        this.dialogFormVisible = true;
+                        this.dialogTitle = "修改楼层";
+                        this.form = row;
+                    } else {
+                        this.$confirm('此操作将永久删除楼层信息, 是否继续?', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            this.fullscreenLoading = true;
+                            var url = "/Storey/Delete";
+                            var data = {
+                                code: code
+                            };
+                            this.$http.post(url, data).then(res => {
+                                console.info(res);
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功!'
+                                });
+                                this.getData(this.currentPage, this.pageSize);
+                                this.fullscreenLoading = false;
+                            }, err => {
+                                this.fullscreenLoading = false;
+                                console.error(err);
+                                this.$message.error('请求异常');
+                            });
+                        }).catch(() => {
+                            this.$message({
+                                type: 'info',
+                                message: '已取消删除'
+                            });
+                        });
+                    }
+                }
+            },
+            created() {
+                this.fullscreenLoading = true;
+                this.getData(1, this.pageSize);
+            }
+        });
+    </script>
+}

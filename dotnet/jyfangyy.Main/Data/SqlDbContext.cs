@@ -11,8 +11,23 @@ namespace jyfangyy.Main.Data
     {
         public SqlDbContext() :base("myLocalDb")
         {
+            InitData();
         }
-
+        void InitData()
+        {
+            if (User.Count() <= 0)
+            {
+                User.Add(new Models.User
+                {
+                    code = "admin",
+                    name = "admin",
+                    pwd = "123456",
+                    sex = "1",
+                    type = "1"
+                });
+                SaveChanges();
+            }
+        }
         public DbSet<User> User { get; set; }
         public DbSet<Device> Device { get; set; }
         public DbSet<Laboratory> Laboratory { get; set; }

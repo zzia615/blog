@@ -34,5 +34,8 @@ namespace jyfangyy.Main.Models
         [Required]
         [StringLength(100)]
         public string laboratory_name { get; set; }
+        [NotMapped]
+        public string action { get; set; }
+
     }
 }

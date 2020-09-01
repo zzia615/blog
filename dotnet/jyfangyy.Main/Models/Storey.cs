@@ -26,5 +26,7 @@ namespace jyfangyy.Main.Models
         [Required]
         [StringLength(100)]
         public string name { get; set; }
+        [NotMapped]
+        public string action { get; set; }
     }
 }

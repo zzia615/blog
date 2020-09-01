@@ -8,16 +8,16 @@ using System.Web.Mvc;
 
 namespace jyfangyy.Main.Controllers
 {
-    public class StoreyController : Controller
+    public class LaboratoryController : Controller
     {
         private readonly SqlDbContext dbContext;
 
-        public StoreyController()
+        public LaboratoryController()
         {
             this.dbContext = new SqlDbContext();
         }
         /// <summary>
-        /// 楼层维护主页
+        /// 实验室主页
         /// </summary>
         /// <returns></returns>
         public ActionResult Index()
@@ -25,27 +25,26 @@ namespace jyfangyy.Main.Controllers
             return View();
         }
 
-
         /// <summary>
-        /// 保存楼层
+        /// 保存实验室
         /// </summary>
-        /// <param name="code">楼层编号</param>
+        /// <param name="code">实验室编号</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Save(Storey storey)
+        public ActionResult Save(Laboratory laboratory)
         {
             var obj = new { code = "0000", msg = "" };
 
-            if (storey.action == "editStorey")
+            if (laboratory.action == "editLaboratory")
             {
-                //修改楼层信息
-                dbContext.Entry(storey).State = System.Data.Entity.EntityState.Modified;
+                //修改实验室信息
+                dbContext.Entry(laboratory).State = System.Data.Entity.EntityState.Modified;
                 dbContext.SaveChanges();
             }
             else
             {
-                //新增楼层信息
-                dbContext.Storey.Add(storey);
+                //新增实验室信息
+                dbContext.Laboratory.Add(laboratory);
                 dbContext.SaveChanges();
             }
             //返回结果
@@ -53,23 +52,23 @@ namespace jyfangyy.Main.Controllers
         }
 
         /// <summary>
-        /// 删除楼层
+        /// 删除实验室
         /// </summary>
-        /// <param name="code">楼层编号</param>
+        /// <param name="code">实验室编号</param>
         /// <returns></returns>
         [HttpPost]
         public ActionResult Delete(string code)
         {
             var obj = new { code = "0000", msg = "" };
-            //查询楼层信息
-            var data = dbContext.Storey.SingleOrDefault(a => a.code == code);
+            //查询实验室信息
+            var data = dbContext.Laboratory.SingleOrDefault(a => a.code == code);
             if (data == null)
             {
-                obj = new { code = "0001", msg = "楼层信息不存在" };
+                obj = new { code = "0001", msg = "实验室信息不存在" };
             }
             else
             {
-                //删除楼层信息
+                //删除实验室信息
                 dbContext.Entry(data).State = System.Data.Entity.EntityState.Deleted;
                 dbContext.SaveChanges();
             }
@@ -78,7 +77,7 @@ namespace jyfangyy.Main.Controllers
         }
 
         /// <summary>
-        /// 分页查询楼层信息
+        /// 分页查询实验室信息
         /// </summary>
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
@@ -86,13 +85,16 @@ namespace jyfangyy.Main.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult GetStoreyList(int pageIndex,int pageSize,string code,string name)
+        public ActionResult GetLaboratoryList(int pageIndex, int pageSize, string code, string name,string storey_code)
         {
             //查询数据
-            var query = dbContext.Storey.AsQueryable();
+            var query = dbContext.Laboratory.AsQueryable();
             //如果code有值则设置为条件
             if (!string.IsNullOrEmpty(code))
                 query = query.Where(a => a.code.Contains(code));
+            //如果storey_code有值则设置为条件
+            if (!string.IsNullOrEmpty(storey_code))
+                query = query.Where(a => a.storey_code.Contains(storey_code));
             //如果name有值则设置为条件
             if (!string.IsNullOrEmpty(name))
                 query = query.Where(a => a.name.Contains(name));

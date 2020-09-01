@@ -34,7 +34,7 @@ namespace jyfangyy.Main.Models
         /// <summary>
         /// 占用时间
         /// </summary>
-        public DateTime occupy_date { get; set; }
+        public DateTime? occupy_date { get; set; }
         /// <summary>
         /// 楼层唯一码
         /// </summary>
@@ -47,5 +47,7 @@ namespace jyfangyy.Main.Models
         [Required]
         [StringLength(100)]
         public string storey_name { get; set; }
+        [NotMapped]
+        public string action { get; set; }
     }
 }

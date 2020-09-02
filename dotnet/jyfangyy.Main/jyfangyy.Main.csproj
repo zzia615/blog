@@ -192,6 +192,9 @@
     <Content Include="Views\Laboratory\Index.cshtml" />
     <Content Include="Views\Device\Index.cshtml" />
     <Content Include="Views\LabApply\Index.cshtml" />
+    <Content Include="Views\LabApply\Apply.cshtml" />
+    <Content Include="Views\LabApply\Study.cshtml" />
+    <Content Include="Views\LabApply\StudyApply.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

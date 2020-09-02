@@ -105,7 +105,7 @@ namespace jyfangyy.Main.Models
         public string remark { get; set; }
         /// <summary>
         /// 申请状态
-        /// 1.审核中 2.已审核 3.已完成 9.拒绝审核
+        /// 0.已撤销 1.审核中 2.已审核 3.已完成 9.已打回
         /// </summary>
         public int status { get; set; }
 
@@ -116,6 +116,8 @@ namespace jyfangyy.Main.Models
             {
                 switch (status)
                 {
+                    case 0:
+                        return "已撤销";
                     case 1:
                         return "审核中";
                     case 2:
@@ -123,7 +125,7 @@ namespace jyfangyy.Main.Models
                     case 3:
                         return "已完成";
                     case 9:
-                        return "拒绝审核";
+                        return "已打回";
                     default:
                         return "";
                 }

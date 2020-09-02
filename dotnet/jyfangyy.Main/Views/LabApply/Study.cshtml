@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "机房预约申请";
+    ViewBag.Title = "个人学习预约申请";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -23,10 +23,10 @@
     </el-col>
     <el-col>
         <el-card class="box-card" style="height:80px">
-            <el-form ref="form"  :inline="true" :model="formQuery" label-width="60px">
-                <el-form-item label="实验室" prop="laboratory_code_q">
-                    <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
-                        <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+            <el-form ref="form" :inline="true" :model="formQuery" label-width="60px">
+                <el-form-item label="设备" prop="device_code_q">
+                    <el-select v-model="formQuery.device_code_q" placeholder="请选择设备" style="width:100%">
+                        <el-option v-for="(item,index) in deviceList" :label="item.name" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -74,9 +74,9 @@
 
 <el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
-        <el-form-item label="实验室" prop="code">
-            <el-select v-model="form.code" placeholder="请选择实验室" style="width:100%">
-                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+        <el-form-item label="设备" prop="code">
+            <el-select v-model="form.code" placeholder="请选择设备" style="width:100%">
+                <el-option v-for="(item,index) in deviceList" :label="item.name" :value="item.code"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="预约日期" prop="plan_date">
@@ -112,11 +112,11 @@
                 pageSize: 10,
                 currentPage: 4,
                 dialogFormVisible: false,
-                dialogTitle: "新增机房申请",
+                dialogTitle: "新增个人学习申请",
                 editMode: false,
                 fullscreenLoading: false,
                 dialogLoading: false,
-                laboratoryList: [],
+                deviceList: [],
                 form: {
                     id:'',
                     code: '',
@@ -125,12 +125,12 @@
                     remark:''
                 },
                 formQuery: {
-                    laboratory_code_q:''
+                    device_code_q:''
                 },
                 rules: {
                     code: [{
                         required: true,
-                        message: '请选择实验室',
+                        message: '请选择设备',
                         trigger: 'blur'
                     }],
                     plan_date: [{
@@ -158,7 +158,7 @@
             },
             addLabApply() {
                 this.editMode = false;
-                this.dialogTitle = "新增机房申请";
+                this.dialogTitle = "新增个人学习申请";
                 this.dialogFormVisible = true;
                 this.form = {
                     code: '',
@@ -179,10 +179,10 @@
                         } else {
                             data.action = "addLabApply";
                         }
-                        data.mode = '机房预约';
-                        for (var s in this.laboratoryList) {
-                            if (this.laboratoryList[s].code == data.code) {
-                                data.name = this.laboratoryList[s].name;
+                        data.mode = '座位预约';
+                        for (var s in this.deviceList) {
+                            if (this.deviceList[s].code == data.code) {
+                                data.name = this.deviceList[s].name;
                                 break;
                             }
                         }
@@ -227,8 +227,8 @@
                 var data = {
                     pageIndex: pageIndex,
                     pageSize: pageSize,
-                    code: this.formQuery.laboratory_code_q,
-                    mode: '机房预约'
+                    code: this.formQuery.device_code_q,
+                    mode:'座位预约'
                 };
                 this.$http.post(url, data).then(res => {
                     this.tableData3 = res.body.data;
@@ -257,7 +257,7 @@
                     }
                     this.editMode = true;
                     this.dialogFormVisible = true;
-                    this.dialogTitle = "修改机房申请";
+                    this.dialogTitle = "修改个人学习申请";
                     this.form = row;
                     this.form.plan_date = this.form.plan_date_n;
                     this.form.apply_date = this.form.apply_date_n;
@@ -271,7 +271,7 @@
                         return;
                     }
 
-                    this.$confirm('此操作将撤销机房申请信息, 是否继续?', '提示', {
+                    this.$confirm('此操作将撤销个人学习申请信息, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -311,7 +311,7 @@
                         return;
                     }
 
-                    this.$confirm('此操作将永久删除机房申请信息, 是否继续?', '提示', {
+                    this.$confirm('此操作将永久删除个人学习申请信息, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -346,7 +346,7 @@
         created() {
             this.fullscreenLoading = true;
             this.getData(1, this.pageSize);
-            var url = "/Laboratory/GetLaboratoryList";
+            var url = "/Device/GetDeviceList";
             var data = {
                 pageIndex:1,
                 pageSize:99999
@@ -356,10 +356,10 @@
                 var resMsg = res.body.msg;
                 if (resCode != "0000") {
                     this.fullscreenLoading = false;
-                    this.$message.error("获取实验室信息失败，错误原因："+resMsg);
+                    this.$message.error("获取设备信息失败，错误原因："+resMsg);
                     return;
                 }
-                this.laboratoryList = res.body.data;
+                this.deviceList = res.body.data;
                 this.fullscreenLoading = false;
             }, err => {
                 this.fullscreenLoading = false;

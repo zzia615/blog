@@ -21,6 +21,46 @@ namespace jyfangyy.Main.Controllers
         {
             return View();
         }
+        public bool CheckLabUsable(LabApply apply)
+        {
+            //查询是否存在已审核的实验室/设备申请
+            var data = dbContext.LabApply.Where(a => a.code == apply.code && a.plan_date == apply.plan_date && a.plan_sjd == apply.plan_sjd && a.status == 2&&a.mode==apply.mode).ToList();
+            if (data.Count > 0) return false;
+            if (apply.mode == "机房预约")
+            {
+                //机房预约需要校验预约时间和时间段内是否有人预约了单个座位
+                //如果无人预约（数量0）则返回成功
+                //否则返回失败
+                var tmp = from a in dbContext.Laboratory
+                          from b in dbContext.Device
+                          from c in dbContext.LabApply
+                          where a.code == b.laboratory_code & b.code == c.code & c.status == 2 & c.mode == "座位预约"
+                          & c.plan_date == apply.plan_date & c.plan_sjd == apply.plan_sjd & a.code == apply.code
+                          select c;
+                if (tmp.Count() > 0)
+                {
+                    return false;
+                }
+            }
+            if (apply.mode == "座位预约")
+            {
+                //座位预约需要校验预约时间和时间段内是否有人预约了整个机房
+                //如果无人预约（数量0）则返回成功
+                //否则返回失败
+                var tmp = from a in dbContext.Laboratory
+                          from b in dbContext.Device
+                          from c in dbContext.LabApply
+                          where a.code == b.laboratory_code & a.code == c.code & c.status == 2 & c.mode == "机房预约"
+                          & c.plan_date == apply.plan_date & c.plan_sjd == apply.plan_sjd & a.code == apply.code
+                          select c;
+                if (tmp.Count() > 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
         /// <summary>
         /// 保存申请
         /// </summary>
@@ -29,20 +69,29 @@ namespace jyfangyy.Main.Controllers
         public ActionResult Save(LabApply apply)
         {
             var obj = new { code = "0000", msg = "" };
-
             apply.mode = "机房预约";
-            if (apply.action == "editLabApply")
+            if (!CheckLabUsable(apply))
             {
-                //修改申请信息
-                dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
-                dbContext.SaveChanges();
+                obj = new { code = "0001", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
             }
             else
             {
-                apply.status = 1;
-                //新增申请信息
-                dbContext.LabApply.Add(apply);
-                dbContext.SaveChanges();
+                if (apply.action == "editLabApply")
+                {
+                    //修改申请信息
+                    dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
+                    dbContext.SaveChanges();
+                }
+                else
+                {
+                    apply.user_code = Session["user_code"].AsString();
+                    apply.user_name = Session["user_name"].AsString();
+                    apply.user_type = Session["user_type"].AsString();
+                    apply.status = 1;
+                    //新增申请信息
+                    dbContext.LabApply.Add(apply);
+                    dbContext.SaveChanges();
+                }
             }
             //返回结果
             return Json(obj);

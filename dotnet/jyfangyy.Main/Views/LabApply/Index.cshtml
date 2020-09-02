@@ -22,23 +22,35 @@
         </el-card>
     </el-col>
     <el-col>
-        <el-card class="box-card" style="height:80px">
-            <el-form ref="form" :inline="true" :model="formQuery" label-width="60px">
-                <el-form-item label="编号" prop="code_q">
-                    <el-input v-model="formQuery.code_q"></el-input>
-                </el-form-item>
-                <el-form-item label="名称" prop="name_q">
-                    <el-input v-model="formQuery.name_q"></el-input>
-                </el-form-item>
-                <el-form-item label="实验室" prop="laboratory_code_q">
-                    <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
-                        <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @@click="queryLabApply">查询</el-button>
-                    <el-button @@click="addLabApply">新增</el-button>
-                </el-form-item>
+        <el-card class="box-card" style="height:160px">
+            <el-form ref="form" :model="formQuery" label-width="60px">
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="编号" prop="code_q">
+                            <el-input v-model="formQuery.code_q"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="名称" prop="name_q">
+                            <el-input v-model="formQuery.name_q"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="实验室" prop="laboratory_code_q">
+                            <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
+                                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item>
+                            <el-button type="primary" @@click="queryLabApply">查询</el-button>
+                            <el-button @@click="addLabApply">新增</el-button>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </el-form>
         </el-card>
     </el-col>
@@ -47,7 +59,7 @@
             <el-table :data="tableData3" height="400px" border style="width: 100%">
                 <el-table-column prop="code" label="编号" width="100">
                 </el-table-column>
-                <el-table-column prop="name" label="名称">
+                <el-table-column prop="name" label="名称" width="180">
                 </el-table-column>
                 <el-table-column prop="apply_date_n" label="申请时间" width="180">
                 </el-table-column>
@@ -55,7 +67,9 @@
                 </el-table-column>
                 <el-table-column prop="plan_sjd" label="预约时段" width="100">
                 </el-table-column>
-                <el-table-column prop="status_n" label="申请状态" width="100">
+                <el-table-column prop="remark" label="使用说明" width="200">
+                </el-table-column>
+                <el-table-column prop="status_n" label="申请状态">
                 </el-table-column>
                 <el-table-column fixed="right" label="操作" width="160">
                     <template slot-scope="scope">
@@ -92,6 +106,9 @@
                 <el-option label="下午" value="下午"></el-option>
             </el-select>
         </el-form-item>
+        <el-form-item label="使用说明" prop="remark">
+            <el-input v-model="form.remark"></el-input>
+        </el-form-item>
         <el-form-item>
             <el-button type="primary" @@click="onSubmit('form')">保存</el-button>
             <el-button @@click="dialogFormVisible=false">取消</el-button>
@@ -119,7 +136,8 @@
                     id:'',
                     code: '',
                     plan_date: '',
-                    plan_sjd: ''
+                    plan_sjd: '',
+                    remark:''
                 },
                 formQuery: {
                     name_q: '',
@@ -141,6 +159,11 @@
                         required: true,
                         message: '请选择预约时段',
                         trigger: 'blur'
+                    }],
+                    remark: [{
+                        required: true,
+                        message: '请输入使用说明',
+                        trigger: 'blur'
                     }]
                 }
             }
@@ -157,7 +180,8 @@
                 this.form = {
                     code: '',
                     plan_date: '',
-                    plan_sjd: ''
+                    plan_sjd: '',
+                    remark: ''
                 };
             },
             onSubmit(formName) {

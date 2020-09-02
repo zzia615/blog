@@ -22,23 +22,36 @@
         </el-card>
     </el-col>
     <el-col>
-        <el-card class="box-card" style="height:80px">
-            <el-form ref="form" :inline="true" :model="formQuery" label-width="60px">
-                <el-form-item label="编号" prop="code_q">
-                    <el-input v-model="formQuery.code_q"></el-input>
-                </el-form-item>
-                <el-form-item label="名称" prop="name_q">
-                    <el-input v-model="formQuery.name_q"></el-input>
-                </el-form-item>
-                <el-form-item label="实验室" prop="laboratory_code_q">
-                    <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
-                        <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @@click="queryDevice">查询</el-button>
-                    <el-button @@click="addDevice">新增</el-button>
-                </el-form-item>
+        <el-card class="box-card" style="height:160px">
+            <el-form ref="form" :model="formQuery" label-width="60px">
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="编号" prop="code_q">
+                            <el-input v-model="formQuery.code_q"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="名称" prop="name_q">
+                            <el-input v-model="formQuery.name_q"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="实验室" prop="laboratory_code_q">
+                            <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
+                                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item>
+                            <el-button type="primary" @@click="queryDevice">查询</el-button>
+                            <el-button @@click="addDevice">新增</el-button>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                </el-row>
             </el-form>
         </el-card>
     </el-col>

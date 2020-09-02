@@ -61,6 +61,24 @@ namespace jyfangyy.Main.Models
             }
         }
         /// <summary>
+        /// 申请人账号
+        /// </summary>
+        [Required]
+        [StringLength(50)]
+        public string user_code { get; set; }
+        /// <summary>
+        /// 申请人姓名
+        /// </summary>
+        [Required]
+        [StringLength(20)]
+        public string user_name { get; set; }
+        /// <summary>
+        /// 申请人类别
+        /// </summary>
+        [Required]
+        [StringLength(10)]
+        public string user_type { get; set; }
+        /// <summary>
         /// 计划时间
         /// </summary>
         [Required]
@@ -79,6 +97,12 @@ namespace jyfangyy.Main.Models
         [Required]
         [StringLength(20)]
         public string plan_sjd { get; set; }
+        /// <summary>
+        /// 使用说明
+        /// </summary>
+        [Required]
+        [StringLength(200)]
+        public string remark { get; set; }
         /// <summary>
         /// 申请状态
         /// 1.审核中 2.已审核 3.已完成 9.拒绝审核

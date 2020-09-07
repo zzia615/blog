@@ -46,7 +46,7 @@ namespace jyfangyy.Main.Models
         public string major { get; set; }
         /// <summary>
         /// 用户类别
-        /// 管理员、教师、学生
+        /// 1.管理员、2.教师、3.学生
         /// </summary>
         [Required]
         [StringLength(10)]

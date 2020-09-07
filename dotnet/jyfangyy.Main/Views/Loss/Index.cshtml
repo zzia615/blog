@@ -1,0 +1,372 @@
+﻿
+@{
+    ViewBag.Title = "失物信息发布";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+    <style>
+        .box-card {
+            margin-bottom: 3px;
+        }
+    </style>
+}
+
+<el-row v-loading.fullscreen.lock="fullscreenLoading">
+    <el-col>
+        <el-card class="box-card">
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>@ViewBag.Title</el-breadcrumb-item>
+            </el-breadcrumb>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card" style="height:80px">
+            <el-form ref="form"  :inline="true" :model="formQuery" label-width="60px">
+                <el-form-item label="实验室" prop="laboratory_code_q">
+                    <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
+                        <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @@click="queryLoss">查询</el-button>
+                    <el-button @@click="addLoss">新增</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card">
+            <el-table :data="tableData3" height="400px" border style="width: 100%">
+                <el-table-column prop="lab_name" label="实验室" width="100">
+                </el-table-column>
+                <el-table-column prop="date_n" label="发布日期" width="170">
+                </el-table-column>
+                <el-table-column prop="description" label="发布内容">
+                </el-table-column>
+                <el-table-column prop="status_n" label="发布状态" width="100">
+                </el-table-column>
+                <el-table-column prop="user_name" label="领取人" width="100">
+                </el-table-column>
+                <el-table-column prop="user_type_n" label="用户类别" width="100">
+                </el-table-column>
+                <el-table-column fixed="right" label="操作" width="230">
+                    <template slot-scope="scope">
+                        <el-button @@click="handleClick(scope.row,'edit')" type="primary" plain size="small">编辑</el-button>
+                        <el-button @@click="handleClick(scope.row,'finish')" type="info" plain size="small">领取</el-button>
+                        <el-button @@click="handleClick(scope.row,'delete')" type="danger" plain size="small">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination background layout="prev, pager, next" :total="totalNum" :page-size="pageSize" :current-page="currentPage"
+                           @@current-change="handleCurrentChanged">
+            </el-pagination>
+        </el-card>
+    </el-col>
+</el-row>
+
+
+
+<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
+        <el-form-item label="实验室" prop="lab_code">
+            <el-select v-model="form.lab_code" placeholder="请选择实验室" style="width:100%" :disabled="userCodeVisible">
+                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="发布内容" prop="description">
+            <el-input v-model="form.description" :disabled="userCodeVisible"></el-input>
+        </el-form-item>
+        <el-form-item label="认领人" prop="user_code" v-show="userCodeVisible">
+            <el-select v-model="form.user_code" placeholder="请选择认领人" style="width:100%">
+                <el-option v-for="(item,index) in userList" :label="item.name" :value="item.code"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @@click="onSubmit('form')">{{dialogOkTxt}}</el-button>
+            <el-button @@click="dialogFormVisible=false">取消</el-button>
+        </el-form-item>
+    </el-form>
+</el-dialog>
+
+@section Scripts{
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                tableData3: [],
+                totalNum: 100,
+                pageSize: 10,
+                currentPage: 4,
+                dialogFormVisible: false,
+                dialogTitle: "新增失物信息",
+                editMode: false,
+                fullscreenLoading: false,
+                dialogLoading: false,
+                laboratoryList: [],
+                userList:[],
+                userCodeVisible: false,
+                dialogOkTxt:'保存',
+                form: {
+                    id:'',
+                    lab_code: '',
+                    description: '',
+                    status: ''
+                },
+                formQuery: {
+                    laboratory_code_q:''
+                },
+                rules: {
+                    lab_code: [{
+                        required: true,
+                        message: '请选择实验室',
+                        trigger: 'blur'
+                    }],
+                    description: [{
+                        required: true,
+                        message: '请输入发布内容',
+                        trigger: 'blur'
+                    }]
+                }
+            }
+        },
+        methods: {
+            queryLoss() {
+                this.fullscreenLoading = true;
+                this.getData(1, this.pageSize);
+            },
+            addLoss() {
+                this.editMode = false;
+                this.dialogOkTxt = "保存";
+                this.userCodeVisible = false;
+                this.dialogTitle = "新增失物信息";
+                this.dialogFormVisible = true;
+                this.form = {
+                    lab_code: '',
+                    description: '',
+                    status: ''
+                };
+            },
+            onSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.dialogLoading = true;
+                        var url = "/Loss/Save";
+                        var data = this.form;
+                        if (this.editMode) {
+                            data.status = 1;
+                            data.action = "editLoss";
+                        } else {
+                            data.action = "addLoss";
+                        }
+
+                        if (this.dialogOkTxt == "领取") {
+                            data.action = "finishLoss";
+                        }
+
+                        for (var s in this.laboratoryList) {
+                            if (this.laboratoryList[s].code == data.lab_code) {
+                                data.lab_name = this.laboratoryList[s].name;
+                                break;
+                            }
+                        }
+
+                        this.$http.post(url, data).then(res => {
+                            console.info(res);
+                            var resCode = res.body.code;
+                            var resMsg = res.body.msg;
+                            if (resCode != "0000") {
+                                this.dialogLoading = false;
+                                this.$message.error("保存失败，错误原因：" + resMsg);
+                                return;
+                            }
+                            this.$message({
+                                message: '保存成功',
+                                type: 'success'
+                            });
+                            this.dialogFormVisible = false;
+                            this.dialogLoading = false;
+                            this.fullscreenLoading = true;
+                            this.getData(this.currentPage, this.pageSize);
+                        }, err => {
+                            console.error(err);
+                            this.$message.error('请求异常');
+                            this.dialogLoading = false;
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            resetSubmit(formName) {
+                this.$refs[formName].resetFields();
+            },
+            handleCurrentChanged(val) {
+                this.currentPage = val;
+                this.getData(this.currentPage, this.pageSize);
+            },
+            getData(pageIndex, pageSize) {
+                console.info(pageIndex + " " + pageSize);
+                var url = "/Loss/GetLossList";
+                var data = {
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    lab_code: this.formQuery.laboratory_code_q
+                };
+                this.$http.post(url, data).then(res => {
+                    this.tableData3 = res.body.data;
+                    this.totalNum = res.body.count;
+                    this.currentPage = pageIndex;
+
+                    this.fullscreenLoading = false;
+                }, err => {
+                    console.error(err);
+                    this.$message.error('请求异常');
+                    this.fullscreenLoading = false;
+
+                });
+
+            },
+            handleClick(row, mode) {
+                var id = row.id;
+                var status = row.status;
+                if (mode == "edit") {
+                    if (status != 1) {
+                        this.$message({
+                            type: 'warning',
+                            message: '只有已发布的失物才允许修改'
+                        });
+                        return;
+                    }
+                    this.editMode = true;
+                    this.dialogOkTxt = "保存";
+                    this.userCodeVisible = false;
+                    this.dialogFormVisible = true;
+                    this.dialogTitle = "修改失物信息";
+                    this.form = {
+                        id: row.id,
+                        lab_code: row.lab_code,
+                        description: row.description,
+                        status: row.status
+                    };
+                    this.form.date = row.date_n;
+                }
+                else if (mode == "finish") {
+                    if (status != 1) {
+                        this.$message({
+                            type: 'warning',
+                            message: '只有已发布的失物才允许领用'
+                        });
+                        return;
+                    }
+
+                    this.editMode = true;
+                    this.dialogFormVisible = true;
+                    this.dialogTitle = "领取失物信息";
+                    this.dialogOkTxt = "领取";
+                    this.userCodeVisible = true;
+                    this.form = {
+                        id: row.id,
+                        lab_code: row.lab_code,
+                        description: row.description,
+                        status: row.status
+                    };
+                    this.form.date = row.date_n;
+                } 
+                else {
+
+                    if (status != 1) {
+                        this.$message({
+                            type: 'warning',
+                            message: '只有已发布的失物才允许删除'
+                        });
+                        return;
+                    }
+
+                    this.$confirm('此操作将永久删除失物信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.fullscreenLoading = true;
+                        var url = "/Loss/Delete";
+                        var data = {
+                            id: id
+                        };
+                        this.$http.post(url, data).then(res => {
+                            console.info(res);
+                            var resCode = res.body.code;
+                            var resMsg = res.body.msg;
+                            if (resCode != "0000") {
+                                this.fullscreenLoading = false;
+                                this.$message.error("删除失败，错误原因：" + resMsg);
+                                return;
+                            }
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.currentPage, this.pageSize);
+                            this.fullscreenLoading = false;
+                        }, err => {
+                            this.fullscreenLoading = false;
+                            console.error(err);
+                            this.$message.error('请求异常');
+                        });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+                }
+            }
+        },
+        created() {
+            this.fullscreenLoading = true;
+            this.getData(1, this.pageSize);
+            var url = "/Laboratory/GetLaboratoryList";
+            var data = {
+                pageIndex:1,
+                pageSize:99999
+            };
+            this.$http.post(url, data).then(res => {
+                var resCode = res.body.code;
+                var resMsg = res.body.msg;
+                if (resCode != "0000") {
+                    this.fullscreenLoading = false;
+                    this.$message.error("获取实验室信息失败，错误原因："+resMsg);
+                    return;
+                }
+                this.laboratoryList = res.body.data;
+                this.fullscreenLoading = false;
+            }, err => {
+                this.fullscreenLoading = false;
+                console.error(err);
+                this.$message.error('请求异常');
+            });
+
+
+
+            var url1 = "/User/GetUserList";
+            this.$http.post(url1, data).then(res => {
+                var resCode = res.body.code;
+                var resMsg = res.body.msg;
+                if (resCode != "0000") {
+                    this.fullscreenLoading = false;
+                    this.$message.error("获取用户信息失败，错误原因：" + resMsg);
+                    return;
+                }
+                this.userList = res.body.data;
+                this.fullscreenLoading = false;
+            }, err => {
+                this.fullscreenLoading = false;
+                console.error(err);
+                this.$message.error('请求异常');
+            });
+        }
+    });
+</script>
+}

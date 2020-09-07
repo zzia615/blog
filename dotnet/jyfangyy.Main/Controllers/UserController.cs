@@ -144,7 +144,8 @@ namespace jyfangyy.Main.Controllers
             //查询数据
             var query = dbContext.User.AsQueryable();
             //限定查询的类别
-            query = query.Where(a => a.type == type);
+            if (!string.IsNullOrEmpty(type))
+                query = query.Where(a => a.type == type);
             //如果code有值则设置为条件
             if (!string.IsNullOrEmpty(code))
                 query = query.Where(a => a.code.Contains(code));

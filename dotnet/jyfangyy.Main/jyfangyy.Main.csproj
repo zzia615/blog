@@ -133,6 +133,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LabApplyController.cs" />
     <Compile Include="Controllers\LaboratoryController.cs" />
+    <Compile Include="Controllers\LossController.cs" />
     <Compile Include="Controllers\StoreyController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Data\SqlDbContext.cs" />
@@ -141,6 +142,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Controllers\DeviceController.cs" />
+    <Compile Include="Models\Loss.cs" />
     <Compile Include="Models\Device.cs" />
     <Compile Include="Models\LabApply.cs" />
     <Compile Include="Models\Laboratory.cs" />
@@ -195,6 +197,7 @@
     <Content Include="Views\LabApply\Apply.cshtml" />
     <Content Include="Views\LabApply\Study.cshtml" />
     <Content Include="Views\LabApply\StudyApply.cshtml" />
+    <Content Include="Views\Loss\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

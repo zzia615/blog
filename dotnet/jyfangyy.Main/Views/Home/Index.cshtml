@@ -107,6 +107,7 @@
                         @if (Model.type == "2" || Model.type == "3")
                         {
                             <el-menu-item index="4-2">失物招领</el-menu-item>
+                            <el-menu-item index="4-3">我的申领记录</el-menu-item>
                         }
                     </el-submenu>
 
@@ -114,7 +115,15 @@
                         <template slot="title">
                             <i class="el-icon-reading"></i>破损管理
                         </template>
-                        <el-menu-item index="5-1">设备破损信息发布</el-menu-item>
+                        @if (Model.type == "1")
+                        {
+                            <el-menu-item index="5-1">设备破损信息发布</el-menu-item>
+                        }
+
+                        @if (Model.type == "2" || Model.type == "3")
+                        {
+                            <el-menu-item index="5-2">设备破损信息</el-menu-item>
+                        }
                     </el-submenu>
 
                     @if (Model.type == "1")
@@ -297,6 +306,27 @@
                             break;
                         case "6-3": //设备信息
                             this.mainFrameUrl = "/Device/Index";
+                            break;
+                        case "3-1":  //机房排课情况查询
+                            this.mainFrameUrl = "/Report/LabPaike";
+                            break;
+                        case "3-2":  //机房使用情况查询
+                            this.mainFrameUrl = "/Report/LabUse";
+                            break;
+                        case "4-1"://失物信息发布
+                            this.mainFrameUrl = "/Loss/Index";
+                            break;
+                        case "4-2"://失物信息申领
+                            this.mainFrameUrl = "/Loss/Apply";
+                            break;
+                        case "4-3"://我的申领记录
+                            this.mainFrameUrl = "/Loss/ApplyForMe";
+                            break;
+                        case "5-1"://破损信息发布
+                            this.mainFrameUrl = "/Damage/Index";
+                            break;
+                        case "5-2"://破损信息查询
+                            this.mainFrameUrl = "/Damage/Query";
                             break;
                     }
                 }, err => {

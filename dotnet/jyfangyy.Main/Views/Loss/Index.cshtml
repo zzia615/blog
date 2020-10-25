@@ -1,0 +1,278 @@
+﻿
+@{
+    ViewBag.Title = "失物信息发布";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+    <style>
+        .box-card {
+            margin-bottom: 3px;
+        }
+    </style>
+}
+
+<el-row v-loading.fullscreen.lock="fullscreenLoading">
+    <el-col>
+        <el-card class="box-card">
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>@ViewBag.Title</el-breadcrumb-item>
+            </el-breadcrumb>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card" style="height:80px">
+            <el-form ref="form"  :inline="true" :model="formQuery" label-width="80px">
+                <el-form-item label="失物标题" prop="title_q">
+                    <el-input v-model="formQuery.title_q"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @@click="queryLoss">查询</el-button>
+                    <el-button @@click="addLoss">新增</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card">
+            <el-table :data="tableData3" height="400px" border style="width: 100%">
+                <el-table-column prop="id" label="编号" width="50">
+                </el-table-column>
+                <el-table-column prop="title" label="标题" width="150">
+                </el-table-column>
+                <el-table-column prop="msg" label="内容">
+                </el-table-column>
+                <el-table-column prop="publishDate_n" label="发布时间" width="140">
+                </el-table-column>
+                <el-table-column prop="status_n" label="失物状态" width="100">
+                </el-table-column>
+                <el-table-column prop="user_name" label="领用人" width="80">
+                </el-table-column>
+                <el-table-column fixed="right" label="操作" width="160">
+                    <template slot-scope="scope">
+                        <el-button @@click="handleClick(scope.row,'edit')" type="primary" plain size="small">编辑</el-button>
+                        <el-button @@click="handleClick(scope.row,'delete')" type="danger" plain size="small">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination background layout="prev, pager, next" :total="totalNum" :page-size="pageSize" :current-page="currentPage"
+                           @@current-change="handleCurrentChanged">
+            </el-pagination>
+        </el-card>
+    </el-col>
+</el-row>
+
+
+
+<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
+        <el-form-item label="标题" prop="title">
+            <el-input v-model="form.title"></el-input>
+        </el-form-item>
+        <el-form-item label="失物内容" prop="msg">
+            <el-input v-model="form.msg"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @@click="onSubmit('form')">保存</el-button>
+            <el-button @@click="dialogFormVisible=false">取消</el-button>
+        </el-form-item>
+    </el-form>
+</el-dialog>
+
+@section Scripts{
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                tableData3: [],
+                totalNum: 100,
+                pageSize: 10,
+                currentPage: 4,
+                dialogFormVisible: false,
+                dialogTitle: "新增失物信息",
+                editMode: false,
+                fullscreenLoading: false,
+                dialogLoading: false,
+                laboratoryList: [],
+                form:{
+                    title: '',
+                    msg: '',
+                    id: 0
+                },
+                formQuery: {
+                    title_q:''
+                },
+                rules: {
+                    title: [{
+                        required: true,
+                        message: '请输入失物标题',
+                        trigger: 'blur'
+                    }],
+                    msg: [{
+                        required: true,
+                        message: '请输入失物信息',
+                        trigger: 'blur'
+                    }]
+                }
+            }
+        },
+        methods: {
+            queryLoss() {
+                this.fullscreenLoading = true;
+                this.getData(1, this.pageSize);
+            },
+            addLoss() {
+                this.editMode = false;
+                this.dialogTitle = "新增失物信息";
+                this.dialogFormVisible = true;
+                this.form = {
+                    title: '',
+                    msg: '',
+                    id: 0
+                };
+            },
+            onSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.dialogLoading = true;
+                        var url = "/Loss/Save";
+                        var data = this.form;
+                        data.status = 1;
+                        if (this.editMode) {
+                            data.action = "editLoss";
+                        } else {
+                            data.action = "addLoss";
+                        }
+                        
+                        this.$http.post(url, data).then(res => {
+                            console.info(res);
+                            var resCode = res.body.code;
+                            var resMsg = res.body.msg;
+                            if (resCode != "0000") {
+                                this.dialogLoading = false;
+                                this.$message.error("保存失败，错误原因：" + resMsg);
+                                return;
+                            }
+                            this.$message({
+                                message: '保存成功',
+                                type: 'success'
+                            });
+                            this.dialogFormVisible = false;
+                            this.dialogLoading = false;
+                            this.fullscreenLoading = true;
+                            this.getData(this.currentPage, this.pageSize);
+                        }, err => {
+                            console.error(err);
+                            this.$message.error('请求异常');
+                            this.dialogLoading = false;
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            resetSubmit(formName) {
+                this.$refs[formName].resetFields();
+            },
+            handleCurrentChanged(val) {
+                this.currentPage = val;
+                this.getData(this.currentPage, this.pageSize);
+            },
+            getData(pageIndex, pageSize) {
+                console.info(pageIndex + " " + pageSize);
+                var url = "/Loss/GetLossList";
+                var data = {
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    title: this.formQuery.title_q
+                };
+                this.$http.post(url, data).then(res => {
+                    this.tableData3 = res.body.data;
+                    this.totalNum = res.body.count;
+                    this.currentPage = pageIndex;
+
+                    this.fullscreenLoading = false;
+                }, err => {
+                    console.error(err);
+                    this.$message.error('请求异常');
+                    this.fullscreenLoading = false;
+
+                });
+
+            },
+            handleClick(row, mode) {
+                var id = row.id;
+                var status = row.status;
+                if (mode == "edit") {
+                    if (status != 1) {
+                        this.$message({
+                            type: 'warning',
+                            message: '只有待领取的失物才允许修改'
+                        });
+                        return;
+                    }
+                    this.editMode = true;
+                    this.dialogTitle = "修改失物信息";
+                    this.form.title = row.title;
+                    this.form.msg = row.msg;
+                    this.form.id = row.id;
+                    this.dialogFormVisible = true;
+                }
+                if (mode == "delete") {
+                    if (status != 1) {
+                        this.$message({
+                            type: 'warning',
+                            message: '只有待领取的失物才允许删除'
+                        });
+                        return;
+                    }
+
+                    this.$confirm('此操作将永久删除失物信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.fullscreenLoading = true;
+                        var url = "/Loss/Delete";
+                        var data = {
+                            id: id
+                        };
+                        this.$http.post(url, data).then(res => {
+                            console.info(res);
+                            var resCode = res.body.code;
+                            var resMsg = res.body.msg;
+                            if (resCode != "0000") {
+                                this.fullscreenLoading = false;
+                                this.$message.error("保存失败，错误原因：" + resMsg);
+                                return;
+                            }
+
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.currentPage, this.pageSize);
+                            this.fullscreenLoading = false;
+                        }, err => {
+                            this.fullscreenLoading = false;
+                            console.error(err);
+                            this.$message.error('请求异常');
+                        });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+                }
+            }
+        },
+        created() {
+            this.fullscreenLoading = true;
+            this.getData(1, this.pageSize);
+        }
+    });
+</script>
+}

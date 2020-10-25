@@ -1,0 +1,167 @@
+﻿
+@{
+    ViewBag.Title = "机房排课情况查询";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+    <style>
+        .box-card {
+            margin-bottom: 3px;
+        }
+    </style>
+}
+
+<el-row v-loading.fullscreen.lock="fullscreenLoading">
+    <el-col>
+        <el-card class="box-card">
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>@ViewBag.Title</el-breadcrumb-item>
+            </el-breadcrumb>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card" style="height:80px">
+            <el-form ref="form" :inline="true" :model="formQuery" label-width="60px">
+                <el-form-item label="实验室" prop="laboratory_code_q">
+                    <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
+                        <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="状态" prop="status_q">
+                    <el-select v-model="formQuery.status_q" placeholder="请选择状态" style="width:100%">
+                        <el-option v-for="(item,index) in statusList" :label="item.name" :value="item.code"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @@click="queryLabApply">查询</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card">
+            <el-table :data="tableData3" height="400px" border style="width: 100%">
+                <el-table-column prop="code" label="编号" width="100">
+                </el-table-column>
+                <el-table-column prop="name" label="名称" width="180">
+                </el-table-column>
+                <el-table-column prop="user_name" label="申请人" width="80">
+                </el-table-column>
+                <el-table-column prop="apply_date_n" label="申请时间" width="180">
+                </el-table-column>
+                <el-table-column prop="plan_date_n" label="预约日期" width="100">
+                </el-table-column>
+                <el-table-column prop="plan_sjd" label="预约时段" width="100">
+                </el-table-column>
+                <el-table-column prop="remark" label="使用说明" width="200">
+                </el-table-column>
+                <el-table-column prop="status_n" label="申请状态">
+                </el-table-column>
+            </el-table>
+            <el-pagination background layout="prev, pager, next" :total="totalNum" :page-size="pageSize" :current-page="currentPage"
+                           @@current-change="handleCurrentChanged">
+            </el-pagination>
+        </el-card>
+    </el-col>
+</el-row>
+
+
+@section Scripts{
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                tableData3: [],
+                totalNum: 100,
+                pageSize: 10,
+                currentPage: 4,
+                fullscreenLoading: false,
+                laboratoryList: [],
+                statusList:[],
+                form: {
+                    id:'',
+                    code: '',
+                    plan_date: '',
+                    plan_sjd: '',
+                    remark:''
+                },
+                formQuery: {
+                    laboratory_code_q: '',
+                    status_q: '99'
+                }
+            }
+        },
+        methods: {
+            queryLabApply() {
+                this.fullscreenLoading = true;
+                this.getData(1, this.pageSize);
+            },
+            handleCurrentChanged(val) {
+                this.currentPage = val;
+                this.getData(this.currentPage, this.pageSize);
+            },
+            getData(pageIndex, pageSize) {
+                console.info(pageIndex + " " + pageSize);
+                var url = "/Report/GetLabPaike";
+                var data = {
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    code: this.formQuery.laboratory_code_q,
+                    mode: '机房预约',
+                    status: this.formQuery.status_q
+                };
+                this.$http.post(url, data).then(res => {
+                    this.tableData3 = res.body.data;
+                    this.totalNum = res.body.count;
+                    this.currentPage = pageIndex;
+
+                    this.fullscreenLoading = false;
+                }, err => {
+                    console.error(err);
+                    this.$message.error('请求异常');
+                    this.fullscreenLoading = false;
+
+                });
+
+            }
+        },
+        created() {
+            this.fullscreenLoading = true;
+            this.getData(1, this.pageSize);
+
+            this.statusList = [
+                { name: "全部", code: "99" },
+                { name: "已撤销", code: "0" },
+                { name: "审核中", code: "1" },
+                { name: "已审核", code: "2" },
+                { name: "已完成", code: "3" },
+                { name: "已打回", code: "9" }
+            ];
+
+            var url = "/Laboratory/GetLaboratoryList";
+            var data = {
+                pageIndex:1,
+                pageSize: 99999
+            };
+            this.$http.post(url, data).then(res => {
+                var resCode = res.body.code;
+                var resMsg = res.body.msg;
+                if (resCode != "0000") {
+                    this.fullscreenLoading = false;
+                    this.$message.error("获取实验室信息失败，错误原因："+resMsg);
+                    return;
+                }
+                this.laboratoryList = res.body.data;
+                this.fullscreenLoading = false;
+            }, err => {
+                this.fullscreenLoading = false;
+                console.error(err);
+                this.$message.error('请求异常');
+            });
+        }
+    });
+</script>
+}

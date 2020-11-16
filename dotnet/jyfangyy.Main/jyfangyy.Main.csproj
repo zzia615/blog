@@ -209,6 +209,7 @@
     <Content Include="Views\Damage\Query.cshtml" />
     <Content Include="Views\Loss\Check.cshtml" />
     <Content Include="Views\Damage\Check.cshtml" />
+    <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -38,14 +38,31 @@ namespace jyfangyy.Main.Models
         public DateTime publishDate { get; set; }
         /// <summary>
         /// 状态
+        /// 0.待审核
         /// 1.待领取
-        /// 2.已领取
+        /// 2.申领中
+        /// 3.已申领
         /// </summary>
         public int status { get; set; }
         /// <summary>
         /// 申领日期
         /// </summary>
         public DateTime? gotDate { get; set; }
+        /// <summary>
+        /// 发布人账号
+        /// </summary>
+        [StringLength(50)]
+        public string pub_user_code { get; set; }
+        /// <summary>
+        /// 发布人姓名
+        /// </summary>
+        [StringLength(20)]
+        public string pub_user_name { get; set; }
+        /// <summary>
+        /// 发布人类别
+        /// </summary>
+        [StringLength(10)]
+        public string pub_user_type { get; set; }
         /// <summary>
         /// 申领人账号
         /// </summary>
@@ -69,13 +86,21 @@ namespace jyfangyy.Main.Models
         {
             get
             {
-                if (status == 1)
+                if (status == 0)
+                {
+                    return "待审核";
+                }
+                else if (status == 1)
                 {
                     return "待领取";
                 }
+                else if (status == 2)
+                {
+                    return "申领中";
+                }
                 else
                 {
-                    return "已领取";
+                    return "已申领";
                 }
             }
         }

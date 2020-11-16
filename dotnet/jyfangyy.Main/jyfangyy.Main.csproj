@@ -204,6 +204,7 @@
     <Content Include="Views\Loss\ApplyForMe.cshtml" />
     <Content Include="Views\Damage\Index.cshtml" />
     <Content Include="Views\Damage\Query.cshtml" />
+    <Content Include="Views\Loss\Check.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

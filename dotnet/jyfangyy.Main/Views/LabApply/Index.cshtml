@@ -26,7 +26,7 @@
             <el-form ref="form"  :inline="true" :model="formQuery" label-width="60px">
                 <el-form-item label="实验室" prop="laboratory_code_q">
                     <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
-                        <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                        <el-option v-for="(item,index) in laboratoryList" :label="item.full_name" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -76,7 +76,7 @@
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
         <el-form-item label="实验室" prop="code">
             <el-select v-model="form.code" placeholder="请选择实验室" style="width:100%">
-                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                <el-option v-for="(item,index) in laboratoryList" :label="item.full_name" :value="item.code"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="预约日期" prop="plan_date">
@@ -182,7 +182,7 @@
                         data.mode = '机房预约';
                         for (var s in this.laboratoryList) {
                             if (this.laboratoryList[s].code == data.code) {
-                                data.name = this.laboratoryList[s].name;
+                                data.name = this.laboratoryList[s].full_name;
                                 break;
                             }
                         }

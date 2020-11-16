@@ -18,6 +18,10 @@ namespace jyfangyy.Main.Controllers
         {
             return View();
         }
+        public ActionResult Check()
+        {
+            return View();
+        }
 
         public ActionResult Query()
         {
@@ -37,6 +41,9 @@ namespace jyfangyy.Main.Controllers
                 var data = dbContext.Damage.Find(damage.id);
                 data.title = damage.title;
                 data.msg = damage.msg;
+                data.code = damage.code;
+                data.name = damage.name;
+                data.status = damage.status;
                 //修改破损信息
                 dbContext.Entry(data).State = System.Data.Entity.EntityState.Modified;
                 dbContext.SaveChanges();
@@ -51,14 +58,20 @@ namespace jyfangyy.Main.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetDamageList(int pageIndex,int pageSize,string title)
+        public ActionResult GetDamageList(int pageIndex,int pageSize,string title,int? status)
         {
             //查询数据
             var query = dbContext.Damage.AsQueryable();
             //如果title有值则设置为条件
             if (!string.IsNullOrEmpty(title))
                 query = query.Where(a => a.title.Contains(title));
-           
+            if (status != null)
+            {
+                if (status.Value > 0)
+                {
+                    query = query.Where(a => a.status==status.Value);
+                }
+            }
             //查询总条数
             int count = query.Count();
             //分页查询数据库的操作
@@ -87,6 +100,59 @@ namespace jyfangyy.Main.Controllers
             return Json(obj);
         }
 
-       
+        [HttpPost]
+        public ActionResult CheckDamage(int id)
+        {
+            var obj = new { code = "0000", msg = "" };
+
+            var data = dbContext.Damage.SingleOrDefault(a => a.id == id);
+            if (data == null)
+            {
+                obj = new { code = "0001", msg = "破损信息不存在，无法审核" };
+            }
+            else
+            {
+                var count = dbContext.Damage.Where(a => a.code == data.code &&a.status==2&& a.id != id).Count();
+                if (count>0)
+                {
+                    obj = new { code = "0001", msg = "已经存在待检修的记录，无法审核" };
+                }
+                else
+                {
+                    data.status = 2;
+                    var device = dbContext.Device.Find(data.code);
+                    device.status = 9;
+                    dbContext.Entry(data).State = System.Data.Entity.EntityState.Modified;
+                    dbContext.Entry(device).State = System.Data.Entity.EntityState.Modified;
+                    dbContext.SaveChanges();
+                }
+            }
+            //返回结果
+            return Json(obj);
+        }
+
+        [HttpPost]
+        public ActionResult FinishDamage(int id)
+        {
+            var obj = new { code = "0000", msg = "" };
+
+            var data = dbContext.Damage.SingleOrDefault(a => a.id == id);
+            if (data == null)
+            {
+                obj = new { code = "0001", msg = "破损信息不存在，无法检修完成" };
+            }
+            else
+            {
+                data.status = 3;
+                var device = dbContext.Device.Find(data.code);
+                device.status = 0;
+                dbContext.Entry(data).State = System.Data.Entity.EntityState.Modified;
+                dbContext.Entry(device).State = System.Data.Entity.EntityState.Modified;
+                dbContext.SaveChanges();
+            }
+            //返回结果
+            return Json(obj);
+        }
+
     }
 }

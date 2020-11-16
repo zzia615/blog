@@ -49,5 +49,7 @@ namespace jyfangyy.Main.Models
         public string storey_name { get; set; }
         [NotMapped]
         public string action { get; set; }
+        [NotMapped]
+        public string full_name { get { return storey_name + "-" + name; } }
     }
 }

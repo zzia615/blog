@@ -60,6 +60,7 @@ namespace jyfangyy.Main.Controllers
                     }
                     else
                     {
+                        device.status = 0;
                         //新增设备信息
                         dbContext.Device.Add(device);
                         dbContext.SaveChanges();

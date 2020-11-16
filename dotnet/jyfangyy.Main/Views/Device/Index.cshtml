@@ -40,7 +40,7 @@
                     <el-col :span="8">
                         <el-form-item label="实验室" prop="laboratory_code_q">
                             <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
-                                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                                <el-option v-for="(item,index) in laboratoryList" :label="item.full_name" :value="item.code"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -61,6 +61,8 @@
                 <el-table-column prop="code" label="编号" width="100">
                 </el-table-column>
                 <el-table-column prop="name" label="名称">
+                </el-table-column>
+                <el-table-column prop="status_n" label="名称">
                 </el-table-column>
                 <el-table-column prop="laboratory_name" label="实验室" width="100">
                 </el-table-column>
@@ -90,7 +92,7 @@
         </el-form-item>
         <el-form-item label="实验室" prop="laboratory_code">
             <el-select v-model="form.laboratory_code" placeholder="请选择实验室" style="width:100%">
-                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                <el-option v-for="(item,index) in laboratoryList" :label="item.full_name" :value="item.code"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item>
@@ -175,7 +177,7 @@
 
                         for (var s in this.laboratoryList) {
                             if (this.laboratoryList[s].code == data.laboratory_code) {
-                                data.laboratory_name = this.laboratoryList[s].name;
+                                data.laboratory_name = this.laboratoryList[s].full_name;
                                 break;
                             }
                         }

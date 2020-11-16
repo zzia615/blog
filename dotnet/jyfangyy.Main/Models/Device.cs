@@ -40,6 +40,31 @@ namespace jyfangyy.Main.Models
         public string laboratory_name { get; set; }
         [NotMapped]
         public string action { get; set; }
+        [NotMapped]
+        public string status_n
+        {
+            get
+            {
+                if (status == 1)
+                {
+                    return "占用";
+                }
+                else if (status == 0)
+                {
+                    return "空闲";
+                }
+                else if (status == 9)
+                {
+                    return "损坏";
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+        [NotMapped]
+        public string full_name { get { return laboratory_name + "-" + name; } }
 
     }
 }

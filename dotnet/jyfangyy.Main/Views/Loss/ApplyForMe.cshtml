@@ -95,8 +95,7 @@
                 var data = {
                     pageIndex: pageIndex,
                     pageSize: pageSize,
-                    title: this.formQuery.title_q,
-                    status:2
+                    title: this.formQuery.title_q
                 };
                 this.$http.post(url, data).then(res => {
                     this.tableData3 = res.body.data;

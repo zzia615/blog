@@ -40,6 +40,8 @@
                 </el-table-column>
                 <el-table-column prop="title" label="标题" width="150">
                 </el-table-column>
+                <el-table-column prop="name" label="设备">
+                </el-table-column>
                 <el-table-column prop="msg" label="内容">
                 </el-table-column>
                 <el-table-column prop="publishDate_n" label="发布时间" width="140">
@@ -89,7 +91,8 @@
                 var data = {
                     pageIndex: pageIndex,
                     pageSize: pageSize,
-                    title: this.formQuery.title_q
+                    title: this.formQuery.title_q,
+                    status:2
                 };
                 this.$http.post(url, data).then(res => {
                     this.tableData3 = res.body.data;

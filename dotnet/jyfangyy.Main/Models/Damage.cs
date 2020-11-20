@@ -33,6 +33,25 @@ namespace jyfangyy.Main.Models
         [StringLength(2000)]
         public string msg { get; set; }
         /// <summary>
+        /// 编号
+        /// </summary>
+        [Required]
+        [StringLength(50)]
+        public string code { get; set; }
+        /// <summary>
+        /// 名称
+        /// </summary>
+        [Required]
+        [StringLength(100)]
+        public string name { get; set; }
+        /// <summary>
+        /// 状态
+        /// 1.待审核
+        /// 2.待检修
+        /// 3.已检修
+        /// </summary>
+        public int status { get; set; }
+        /// <summary>
         /// 发布日期
         /// </summary>
         public DateTime publishDate { get; set; }
@@ -47,7 +66,25 @@ namespace jyfangyy.Main.Models
                 return publishDate.ToString("yyyy-MM-dd HH:mm");
             }
         }
+        [NotMapped]
+        public string status_n
+        {
+            get
+            {
+                switch (status)
+                {
+                    case 1:
+                        return "待审核";
+                    case 2:
+                        return "待检修";
+                    case 3:
+                        return "已检修";
+                    default:
+                        return "";
+                }
 
+            }
+        }
         [NotMapped]
         public string action { get; set; }
     }

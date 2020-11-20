@@ -26,7 +26,7 @@
             <el-form ref="form" :inline="true" :model="formQuery" label-width="60px">
                 <el-form-item label="设备" prop="device_code_q">
                     <el-select v-model="formQuery.device_code_q" placeholder="请选择设备" style="width:100%">
-                        <el-option v-for="(item,index) in deviceList" :label="item.name" :value="item.code"></el-option>
+                        <el-option v-for="(item,index) in deviceList" :label="item.full_name" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -76,7 +76,7 @@
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-loading="dialogLoading">
         <el-form-item label="设备" prop="code">
             <el-select v-model="form.code" placeholder="请选择设备" style="width:100%">
-                <el-option v-for="(item,index) in deviceList" :label="item.name" :value="item.code"></el-option>
+                <el-option v-for="(item,index) in deviceList" :label="item.full_name" :value="item.code"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="预约日期" prop="plan_date">
@@ -182,7 +182,7 @@
                         data.mode = '座位预约';
                         for (var s in this.deviceList) {
                             if (this.deviceList[s].code == data.code) {
-                                data.name = this.deviceList[s].name;
+                                data.name = this.deviceList[s].full_name;
                                 break;
                             }
                         }

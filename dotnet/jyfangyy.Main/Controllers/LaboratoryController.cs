@@ -101,7 +101,7 @@ namespace jyfangyy.Main.Controllers
             //查询总条数
             int count = query.Count();
             //分页查询数据库的操作
-            var data = query.OrderBy(a => a.code).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var data = query.OrderBy(a=>a.storey_name).OrderBy(a => a.name).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             //返回json
             var obj = new { code = "0000", msg = "", data = data, count = count };
             return Json(obj);

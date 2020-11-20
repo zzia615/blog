@@ -139,7 +139,7 @@
                         this.dialogLoading = true;
                         var url = "/Loss/Save";
                         var data = this.form;
-                        data.status = 1;
+                        data.status = 0;
                         if (this.editMode) {
                             data.action = "editLoss";
                         } else {
@@ -186,7 +186,8 @@
                 var data = {
                     pageIndex: pageIndex,
                     pageSize: pageSize,
-                    title: this.formQuery.title_q
+                    title: this.formQuery.title_q,
+                    status: 0
                 };
                 this.$http.post(url, data).then(res => {
                     this.tableData3 = res.body.data;
@@ -206,10 +207,10 @@
                 var id = row.id;
                 var status = row.status;
                 if (mode == "edit") {
-                    if (status != 1) {
+                    if (status != 0) {
                         this.$message({
                             type: 'warning',
-                            message: '只有待领取的失物才允许修改'
+                            message: '只有待审核的失物才允许修改'
                         });
                         return;
                     }
@@ -221,10 +222,10 @@
                     this.dialogFormVisible = true;
                 }
                 if (mode == "delete") {
-                    if (status != 1) {
+                    if (status != 0) {
                         this.$message({
                             type: 'warning',
-                            message: '只有待领取的失物才允许删除'
+                            message: '只有待审核的失物才允许删除'
                         });
                         return;
                     }

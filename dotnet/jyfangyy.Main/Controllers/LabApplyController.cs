@@ -71,18 +71,26 @@ namespace jyfangyy.Main.Controllers
             }
             if (apply.mode == "座位预约")
             {
-                //座位预约需要校验预约时间和时间段内是否有人预约了整个机房
-                //如果无人预约（数量0）则返回成功
-                //否则返回失败
-                var tmp = from a in dbContext.Laboratory
-                          from b in dbContext.Device
-                          from c in dbContext.LabApply
-                          where a.code == b.laboratory_code & a.code == c.code & c.status == 2 & c.mode == "机房预约"
-                          & c.plan_date == apply.plan_date & c.plan_sjd == apply.plan_sjd & a.code == apply.code
-                          select c;
-                if (tmp.Count() > 0)
+                var device = dbContext.Device.Find(apply.code);
+                if (device.status == 9)
                 {
                     return false;
+                }
+                else
+                {
+                    //座位预约需要校验预约时间和时间段内是否有人预约了整个机房
+                    //如果无人预约（数量0）则返回成功
+                    //否则返回失败
+                    var tmp = from a in dbContext.Laboratory
+                              from b in dbContext.Device
+                              from c in dbContext.LabApply
+                              where a.code == b.laboratory_code & a.code == c.code & c.status == 2 & c.mode == "机房预约"
+                              & c.plan_date == apply.plan_date & c.plan_sjd == apply.plan_sjd & a.code == apply.code
+                              select c;
+                    if (tmp.Count() > 0)
+                    {
+                        return false;
+                    }
                 }
             }
 
@@ -96,27 +104,38 @@ namespace jyfangyy.Main.Controllers
         public ActionResult Save(LabApply apply)
         {
             var obj = new { code = "0000", msg = "" };
-            if (!CheckLabUsable(apply))
+            if (apply.mode == "座位预约")
             {
-                obj = new { code = "0001", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
+                var device = dbContext.Device.Find(apply.code);
+                if (device.status == 9)
+                {
+                    obj = new { code = "0001", msg = "设备已损坏，请更换设备重新预约" };
+                }
             }
             else
             {
-                if (apply.action == "editLabApply")
+                if (!CheckLabUsable(apply))
                 {
-                    //修改申请信息
-                    dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
-                    dbContext.SaveChanges();
+                    obj = new { code = "0002", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
                 }
                 else
                 {
-                    apply.user_code = Session["user_code"].AsString();
-                    apply.user_name = Session["user_name"].AsString();
-                    apply.user_type = Session["user_type"].AsString();
-                    apply.status = 1;
-                    //新增申请信息
-                    dbContext.LabApply.Add(apply);
-                    dbContext.SaveChanges();
+                    if (apply.action == "editLabApply")
+                    {
+                        //修改申请信息
+                        dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
+                        dbContext.SaveChanges();
+                    }
+                    else
+                    {
+                        apply.user_code = Session["user_code"].AsString();
+                        apply.user_name = Session["user_name"].AsString();
+                        apply.user_type = Session["user_type"].AsString();
+                        apply.status = 1;
+                        //新增申请信息
+                        dbContext.LabApply.Add(apply);
+                        dbContext.SaveChanges();
+                    }
                 }
             }
             //返回结果
@@ -185,17 +204,24 @@ namespace jyfangyy.Main.Controllers
             }
             else
             {
-
-                if (!CheckLabUsable(apply))
+                var device = dbContext.Device.Find(apply.code);
+                if (device.status == 9)
                 {
-                    obj = new { code = "0002", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
+                    obj = new { code = "0001", msg = "设备已损坏，请更换设备重新预约" };
                 }
                 else
                 {
-                    apply.status = 2;
-                    //新增申请信息
-                    dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
-                    dbContext.SaveChanges();
+                    if (!CheckLabUsable(apply))
+                    {
+                        obj = new { code = "0002", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
+                    }
+                    else
+                    {
+                        apply.status = 2;
+                        //新增申请信息
+                        dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
+                        dbContext.SaveChanges();
+                    }
                 }
             }
             //返回结果

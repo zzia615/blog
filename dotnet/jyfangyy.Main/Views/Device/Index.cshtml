@@ -40,7 +40,7 @@
                     <el-col :span="8">
                         <el-form-item label="实验室" prop="laboratory_code_q">
                             <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室" style="width:100%">
-                                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                                <el-option v-for="(item,index) in laboratoryList" :label="item.full_name" :value="item.code"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -57,12 +57,20 @@
     </el-col>
     <el-col>
         <el-card class="box-card">
-            <el-table :data="tableData3" height="400px" border style="width: 100%">
+            <el-table :data="tableData3" height="400px" border style="width: 100%" :cell-style="cellStyle">
                 <el-table-column prop="code" label="编号" width="100">
                 </el-table-column>
                 <el-table-column prop="name" label="名称">
                 </el-table-column>
-                <el-table-column prop="laboratory_name" label="实验室" width="100">
+                <el-table-column prop="status_n" label="状态" width="100">
+                </el-table-column>
+                <el-table-column width="80">
+                    <template slot-scope="scope">
+                        <i class="el-icon-check" style="color:green;font-size:20pt" v-if="scope.row.status!==9"></i>
+                        <i class="el-icon-close" style="color:red;font-size:20pt" v-if="scope.row.status===9"></i>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="laboratory_name" label="实验室" width="160">
                 </el-table-column>
                 <el-table-column fixed="right" label="操作" width="160">
                     <template slot-scope="scope">
@@ -90,7 +98,7 @@
         </el-form-item>
         <el-form-item label="实验室" prop="laboratory_code">
             <el-select v-model="form.laboratory_code" placeholder="请选择实验室" style="width:100%">
-                <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                <el-option v-for="(item,index) in laboratoryList" :label="item.full_name" :value="item.code"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item>
@@ -146,6 +154,14 @@
             }
         },
         methods: {
+            cellStyle(row, column, rowIndex, columnIndex) {
+                if (row.column.label == "编号" || row.column.label == "名称" || row.column.label == "状态" || row.column.label == "实验室") {
+                    if (row.row.status === 9)
+                        return "color:#FF747B";
+                    else
+                        return "color:#000000";
+                }
+            },
             queryDevice() {
                 this.fullscreenLoading = true;
                 this.getData(1, this.pageSize);
@@ -175,7 +191,7 @@
 
                         for (var s in this.laboratoryList) {
                             if (this.laboratoryList[s].code == data.laboratory_code) {
-                                data.laboratory_name = this.laboratoryList[s].name;
+                                data.laboratory_name = this.laboratoryList[s].full_name;
                                 break;
                             }
                         }

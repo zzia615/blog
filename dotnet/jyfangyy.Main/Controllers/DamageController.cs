@@ -84,7 +84,7 @@ namespace jyfangyy.Main.Controllers
             {
                 if (status.Value > 0)
                 {
-                    query = query.Where(a => a.status==status.Value);
+                    query = query.Where(a => a.status == status.Value);
                 }
             }
             //查询总条数
@@ -96,7 +96,23 @@ namespace jyfangyy.Main.Controllers
             return Json(obj);
         }
 
-        
+        [HttpPost]
+        public ActionResult GetDamageListByDevice(int pageIndex, int pageSize, string code)
+        {
+            //查询审核和完成的记录
+            var query = dbContext.Damage.Where(a => a.status == 2 || a.status == 3).AsQueryable();
+            //根据设备编号查询
+            if (!string.IsNullOrEmpty(code))
+                query = query.Where(a => a.code.Contains(code));
+            //查询总条数
+            int count = query.Count();
+            //分页查询数据库的操作
+            var data = query.OrderBy(a => a.id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            //返回json
+            var obj = new { code = "0000", msg = "", data = data, count = count };
+            return Json(obj);
+        }
+
 
         [HttpPost]
         public ActionResult Delete(int id)

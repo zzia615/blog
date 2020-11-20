@@ -1,0 +1,272 @@
+﻿
+@{
+    ViewBag.Title = "分布图";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+    <style>
+        .box-card {
+            margin-bottom: 3px;
+        }
+    </style>
+}
+
+<el-row v-loading.fullscreen.lock="fullscreenLoading">
+    <el-col>
+        <el-card class="box-card">
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>@ViewBag.Title</el-breadcrumb-item>
+            </el-breadcrumb>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card" style="height:80px">
+            <el-form ref="form" :inline="true" :model="formQuery" label-width="60px">
+                <el-form-item label="楼层" prop="storey_code_q">
+                    <el-select v-model="formQuery.storey_code_q" placeholder="请选择楼层" @@change="changeStorey">
+                        <el-option v-for="(item,index) in storeyList" :label="item.name" :value="item.code"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="实验室" prop="laboratory_code_q">
+                    <el-select v-model="formQuery.laboratory_code_q" placeholder="请选择实验室">
+                        <el-option v-for="(item,index) in laboratoryList" :label="item.name" :value="item.code"></el-option>
+                    </el-select>
+                </el-form-item>    
+                <el-form-item>
+                    <el-button type="primary" @@click="queryDevice">查询</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </el-col>
+    <el-col>
+        <el-card class="box-card">
+            <el-table :data="tableData3" height="400px" border style="width: 100%" :cell-style="cellStyle">
+                <el-table-column prop="code" label="编号" width="100">
+                </el-table-column>
+                <el-table-column prop="name" label="名称">
+                </el-table-column>
+                <el-table-column prop="status_n" label="状态" width="100">
+                </el-table-column>
+                <el-table-column width="80">
+                    <template slot-scope="scope">
+                        <i class="el-icon-check" style="color:green;font-size:20pt" v-if="scope.row.status!==9"></i>
+                        <i class="el-icon-close" style="color:red;font-size:20pt" v-if="scope.row.status===9"></i>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="laboratory_name" label="实验室" width="160">
+                </el-table-column>
+                <el-table-column fixed="right" label="操作" width="160">
+                    <template slot-scope="scope">
+                        <el-button @@click="handleClick(scope.row,'showLog')" type="primary" plain size="small">日志</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination background layout="prev, pager, next" :total="totalNum" :page-size="pageSize" :current-page="currentPage"
+                           @@current-change="handleCurrentChanged">
+            </el-pagination>
+        </el-card>
+    </el-col>
+</el-row>
+
+
+
+<el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
+    <el-table :data="tableData4" height="400px" border style="width: 100%" v-loading="dialogLoading">
+        <el-table-column prop="id" label="编号" width="50">
+        </el-table-column>
+        <el-table-column prop="title" label="标题" width="150">
+        </el-table-column>
+        <el-table-column prop="name" label="设备">
+        </el-table-column>
+        <el-table-column prop="msg" label="内容">
+        </el-table-column>
+        <el-table-column prop="publishDate_n" label="发布时间" width="140">
+        </el-table-column>
+    </el-table>
+    <el-pagination background layout="prev, pager, next" :total="totalNum1" :page-size="pageSize1" :current-page="currentPage1"
+                   @@current-change="handleCurrentChanged1">
+    </el-pagination>
+</el-dialog>
+
+@section Scripts{
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                tableData3: [],
+                tableData4: [],
+                totalNum: 100,
+                totalNum1:100,
+                pageSize: 10,
+                pageSize1:10,
+                currentPage: 4,
+                currentPage1:4,
+                dialogFormVisible: false,
+                dialogTitle: "新增设备",
+                editMode: false,
+                fullscreenLoading: false,
+                dialogLoading: false,
+                selectedDeviceCode:"",
+                storeyList:[],
+                laboratoryList: [],
+                form: {
+                    name: '',
+                    code: '',
+                    laboratory_code: ''
+                },
+                formQuery: {
+                    name_q: '',
+                    code_q: '',
+                    storey_code_q:'',
+                    laboratory_code_q:''
+                },
+                rules: {
+                    code: [{
+                        required: true,
+                        message: '请输入编号',
+                        trigger: 'blur'
+                    }],
+                    name: [{
+                        required: true,
+                        message: '请输入名称',
+                        trigger: 'blur'
+                    }],
+                    laboratory_code: [{
+                        required: true,
+                        message: '请选择实验室',
+                        trigger: 'blur'
+                    }]
+                }
+            }
+        },
+        methods: {
+            changeStorey(value) {
+                this.fullscreenLoading = true;
+                var url = "/Laboratory/GetLaboratoryList";
+                var data = {
+                    pageIndex: 1,
+                    pageSize: 99999,
+                    storey_code: value
+                };
+                this.$http.post(url, data).then(res => {
+                    var resCode = res.body.code;
+                    var resMsg = res.body.msg;
+                    if (resCode != "0000") {
+                        this.fullscreenLoading = false;
+                        this.$message.error("获取实验室信息失败，错误原因：" + resMsg);
+                        return;
+                    }
+                    this.laboratoryList = res.body.data;
+                    this.fullscreenLoading = false;
+                }, err => {
+                    this.fullscreenLoading = false;
+                    console.error(err);
+                    this.$message.error('请求异常');
+                });
+            },
+            cellStyle(row, column, rowIndex, columnIndex) {
+                if (row.column.label == "编号" || row.column.label == "名称" || row.column.label == "状态" || row.column.label == "实验室") {
+                    if (row.row.status === 9)
+                        return "color:#FF747B";
+                    else
+                        return "color:#000000";
+                }
+            },
+            queryDevice() {
+                this.fullscreenLoading = true;
+                this.getData(1, this.pageSize);
+            },
+            handleCurrentChanged(val) {
+                this.currentPage = val;
+                this.getData(this.currentPage, this.pageSize);
+            },
+            handleCurrentChanged1(val) {
+                this.currentPage = val;
+                this.getData1(this.currentPage, this.pageSize);
+            },
+            getData(pageIndex, pageSize) {
+                console.info(pageIndex + " " + pageSize);
+                var url = "/Device/GetDeviceList";
+                var data = {
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    code: this.formQuery.code_q,
+                    name: this.formQuery.name_q,
+                    laboratory_code: this.formQuery.laboratory_code_q
+                };
+                this.$http.post(url, data).then(res => {
+                    this.tableData3 = res.body.data;
+                    this.totalNum = res.body.count;
+                    this.currentPage = pageIndex;
+
+                    this.fullscreenLoading = false;
+                }, err => {
+                    console.error(err);
+                    this.$message.error('请求异常');
+                    this.fullscreenLoading = false;
+
+                });
+
+            },
+            getData1(pageIndex, pageSize) {
+                var url = "/Damage/GetDamageList";
+                var data = {
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    code: this.selectedDeviceCode,
+                    status: 2
+                };
+                this.$http.post(url, data).then(res => {
+                    this.tableData4 = res.body.data;
+                    this.totalNum1 = res.body.count;
+                    this.currentPage1 = pageIndex;
+
+                    this.dialogLoading = false;
+                }, err => {
+                    console.error(err);
+                    this.$message.error('请求异常');
+                    this.dialogLoading = false;
+
+                });
+            },
+            handleClick(row, mode) {
+                if (mode == "showLog") {
+                    this.tableData4 = [];
+                    this.selectedDeviceCode = row.code;
+                    this.dialogFormVisible = true;
+                    this.dialogLoading = true;
+                    this.dialogTitle = "损坏日志";
+                    this.getData1(1, this.pageSize1);
+                } 
+            }
+        },
+        created() {
+            this.fullscreenLoading = true;
+            //this.getData(1, this.pageSize);
+            var url = "/Storey/GetStoreyList";
+            var data = {
+                pageIndex: 1,
+                pageSize: 99999
+            };
+            this.$http.post(url, data).then(res => {
+                var resCode = res.body.code;
+                var resMsg = res.body.msg;
+                if (resCode != "0000") {
+                    this.fullscreenLoading = false;
+                    this.$message.error("获取楼层信息失败，错误原因：" + resMsg);
+                    return;
+                }
+                this.storeyList = res.body.data;
+                this.fullscreenLoading = false;
+            }, err => {
+                this.fullscreenLoading = false;
+                console.error(err);
+                this.$message.error('请求异常');
+            });
+        }
+    });
+</script>
+}

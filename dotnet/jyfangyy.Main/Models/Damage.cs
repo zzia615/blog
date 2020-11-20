@@ -33,7 +33,7 @@ namespace jyfangyy.Main.Models
         [StringLength(2000)]
         public string msg { get; set; }
         /// <summary>
-        /// 编号
+        /// 设备编号
         /// </summary>
         [Required]
         [StringLength(50)]

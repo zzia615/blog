@@ -61,7 +61,7 @@ namespace jyfangyy.Main.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetDamageList(int pageIndex,int pageSize,string title,int? status)
+        public ActionResult GetDamageList(int pageIndex,int pageSize,string title,string code,int? status)
         {
             //查询数据
             string user_code = Session["user_code"].AsString();
@@ -77,7 +77,9 @@ namespace jyfangyy.Main.Controllers
             //如果title有值则设置为条件
             if (!string.IsNullOrEmpty(title))
                 query = query.Where(a => a.title.Contains(title));
-            
+            //根据设备编号查询
+            if (!string.IsNullOrEmpty(code))
+                query = query.Where(a => a.code.Contains(code));
             if (status != null)
             {
                 if (status.Value > 0)

@@ -135,6 +135,7 @@
     <Compile Include="Controllers\LaboratoryController.cs" />
     <Compile Include="Controllers\DamageController.cs" />
     <Compile Include="Controllers\LossController.cs" />
+    <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\StoreyController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -211,6 +212,7 @@
     <Content Include="Views\Loss\Check.cshtml" />
     <Content Include="Views\Damage\Check.cshtml" />
     <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
+    <Content Include="Views\Map\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202011201143028_init-Database.resx">

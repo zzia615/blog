@@ -39,6 +39,10 @@ namespace jyfangyy.Main.Models
         [StringLength(100)]
         public string laboratory_name { get; set; }
         [NotMapped]
+        public string storey_code { get; set; }
+        [NotMapped]
+        public string storey_name { get; set; }
+        [NotMapped]
         public string action { get; set; }
         [NotMapped]
         public string status_n
@@ -64,7 +68,7 @@ namespace jyfangyy.Main.Models
             }
         }
         [NotMapped]
-        public string full_name { get { return laboratory_name + "-" + name; } }
+        public string full_name { get { return storey_name+"-"+laboratory_name + "-" + name; } }
 
     }
 }

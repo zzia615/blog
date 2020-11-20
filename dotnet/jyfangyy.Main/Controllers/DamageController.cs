@@ -50,6 +50,9 @@ namespace jyfangyy.Main.Controllers
             }
             else
             {
+                damage.pub_user_code = Session["user_code"].AsString();
+                damage.pub_user_name = Session["user_name"].AsString();
+                damage.pub_user_type = Session["user_type"].AsString();
                 damage.publishDate = DateTime.Now;
                 dbContext.Damage.Add(damage);
                 dbContext.SaveChanges();
@@ -61,10 +64,20 @@ namespace jyfangyy.Main.Controllers
         public ActionResult GetDamageList(int pageIndex,int pageSize,string title,int? status)
         {
             //查询数据
-            var query = dbContext.Damage.AsQueryable();
+            string user_code = Session["user_code"].AsString();
+            string user_type = Session["user_type"].AsString();
+            //查询数据
+            var query = dbContext.Damage.Where(a => a.pub_user_code == user_code && a.pub_user_type == user_type).AsQueryable();
+            if (user_type == "1" || status != null && status.Value == 2)
+            {
+                //管理员查询所有，也可以删除所有
+                query = dbContext.Damage.AsQueryable();
+            }
+
             //如果title有值则设置为条件
             if (!string.IsNullOrEmpty(title))
                 query = query.Where(a => a.title.Contains(title));
+            
             if (status != null)
             {
                 if (status.Value > 0)

@@ -120,8 +120,23 @@ namespace jyfangyy.Main.Controllers
                 query = query.Where(a => a.name.Contains(name));
             //查询总条数
             int count = query.Count();
+            var labList = dbContext.Laboratory.ToList();
+
             //分页查询数据库的操作
             var data = query.OrderBy(a => a.code).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            data.ForEach(a =>
+            {
+                var lab = labList.Find(b => b.code == a.laboratory_code);
+                if (lab != null)
+                {
+                    a.storey_code = lab.storey_code;
+                    a.storey_name = lab.storey_name;
+                }else
+                {
+                    a.storey_code = "";
+                    a.storey_name = "";
+                }
+            });
             //返回json
             var obj = new { code = "0000", msg = "", data = data, count = count };
             return Json(obj);

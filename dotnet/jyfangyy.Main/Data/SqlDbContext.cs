@@ -11,7 +11,8 @@ namespace jyfangyy.Main.Data
     {
         public SqlDbContext() :base("myLocalDb")
         {
-            InitData();
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<SqlDbContext, Migrations.Configuration>());
+            //InitData();
         }
         void InitData()
         {

@@ -112,32 +112,30 @@ namespace jyfangyy.Main.Controllers
                     obj = new { code = "0001", msg = "设备已损坏，请更换设备重新预约" };
                 }
             }
+            if (!CheckLabUsable(apply))
+            {
+                obj = new { code = "0002", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
+            }
             else
             {
-                if (!CheckLabUsable(apply))
+                if (apply.action == "editLabApply")
                 {
-                    obj = new { code = "0002", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
+                    //修改申请信息
+                    dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
+                    dbContext.SaveChanges();
                 }
                 else
                 {
-                    if (apply.action == "editLabApply")
-                    {
-                        //修改申请信息
-                        dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
-                        dbContext.SaveChanges();
-                    }
-                    else
-                    {
-                        apply.user_code = Session["user_code"].AsString();
-                        apply.user_name = Session["user_name"].AsString();
-                        apply.user_type = Session["user_type"].AsString();
-                        apply.status = 1;
-                        //新增申请信息
-                        dbContext.LabApply.Add(apply);
-                        dbContext.SaveChanges();
-                    }
+                    apply.user_code = Session["user_code"].AsString();
+                    apply.user_name = Session["user_name"].AsString();
+                    apply.user_type = Session["user_type"].AsString();
+                    apply.status = 1;
+                    //新增申请信息
+                    dbContext.LabApply.Add(apply);
+                    dbContext.SaveChanges();
                 }
             }
+            
             //返回结果
             return Json(obj);
         }

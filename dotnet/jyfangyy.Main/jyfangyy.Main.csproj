@@ -144,6 +144,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Controllers\DeviceController.cs" />
+    <Compile Include="Migrations\202011201143028_init-Database.cs" />
+    <Compile Include="Migrations\202011201143028_init-Database.Designer.cs">
+      <DependentUpon>202011201143028_init-Database.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Damage.cs" />
     <Compile Include="Models\Device.cs" />
     <Compile Include="Models\LabApply.cs" />
@@ -154,10 +159,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\jfyy.mdf" />
-    <Content Include="App_Data\jfyy_log.ldf">
-      <DependentUpon>jfyy.mdf</DependentUpon>
-    </Content>
     <Content Include="css\ElementUI\element-ui.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -185,6 +186,7 @@
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="fonts\" />
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +211,11 @@
     <Content Include="Views\Loss\Check.cshtml" />
     <Content Include="Views\Damage\Check.cshtml" />
     <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202011201143028_init-Database.resx">
+      <DependentUpon>202011201143028_init-Database.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -69,7 +69,7 @@ namespace jyfangyy.Main.Controllers
             string user_code = Session["user_code"].AsString();
             string user_type = Session["user_type"].AsString();
             //查询数据
-            var query = dbContext.Loss.Where(a => a.user_code == user_code && a.user_type == user_type).AsQueryable();
+            var query = dbContext.Loss.Where(a => a.pub_user_code == user_code && a.pub_user_type == user_type).AsQueryable();
             if (user_type == "1" || status != null && status.Value == 1)
             {
                 //管理员查询所有，也可以删除所有

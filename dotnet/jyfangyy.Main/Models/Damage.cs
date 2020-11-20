@@ -51,6 +51,24 @@ namespace jyfangyy.Main.Models
         /// 3.已检修
         /// </summary>
         public int status { get; set; }
+
+
+        /// <summary>
+        /// 发布人账号
+        /// </summary>
+        [StringLength(50)]
+        public string pub_user_code { get; set; }
+        /// <summary>
+        /// 发布人姓名
+        /// </summary>
+        [StringLength(20)]
+        public string pub_user_name { get; set; }
+        /// <summary>
+        /// 发布人类别
+        /// </summary>
+        [StringLength(10)]
+        public string pub_user_type { get; set; }
+
         /// <summary>
         /// 发布日期
         /// </summary>

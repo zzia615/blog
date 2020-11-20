@@ -204,32 +204,36 @@ namespace jyfangyy.Main.Controllers
             }
             else
             {
-                var device = dbContext.Device.Find(apply.code);
-                if (device == null)
+                if (apply.mode == "座位预约")
                 {
-                    obj = new { code = "0001", msg = "机房信息不存在，检查机房是否已经被删除" };
-                }
-                else
-                {
-                    if (device.status == 9)
+                    var device = dbContext.Device.Find(apply.code);
+                    if (device == null)
                     {
-                        obj = new { code = "0002", msg = "设备已损坏，请更换设备重新预约" };
+                        obj = new { code = "0001", msg = "机房信息不存在，检查机房是否已经被删除" };
                     }
                     else
                     {
-                        if (!CheckLabUsable(apply))
+                        if (device.status == 9)
                         {
-                            obj = new { code = "0003", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
-                        }
-                        else
-                        {
-                            apply.status = 2;
-                            //新增申请信息
-                            dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
-                            dbContext.SaveChanges();
+                            obj = new { code = "0002", msg = "设备已损坏，请更换设备重新预约" };
                         }
                     }
                 }
+                if (obj.code == "0000") //尚未发生错误，则继续执行校验
+                {
+                    if (!CheckLabUsable(apply))
+                    {
+                        obj = new { code = "0003", msg = "实验室/设备已被预约，请更换预约时间或时间段" };
+                    }
+                    else
+                    {
+                        apply.status = 2;
+                        //新增申请信息
+                        dbContext.Entry(apply).State = System.Data.Entity.EntityState.Modified;
+                        dbContext.SaveChanges();
+                    }
+                }
+                
             }
             //返回结果
             return Json(obj);

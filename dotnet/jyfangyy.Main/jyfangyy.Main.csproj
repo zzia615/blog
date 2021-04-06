@@ -173,6 +173,7 @@
     <Content Include="js\vue.min.js" />
     <Content Include="css\ElementUI\fonts\element-icons.ttf" />
     <Content Include="css\ElementUI\fonts\element-icons.woff" />
+    <Content Include="Upload\readme.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

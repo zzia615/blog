@@ -21,17 +21,29 @@ namespace jyfangyy.Main.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         /// <summary>
-        /// 消息标题
+        /// 标题
         /// </summary>
         [Required]
         [StringLength(100)]
         public string title { get; set; }
         /// <summary>
-        /// 消息内容
+        /// 失物内容
         /// </summary>
         [Required]
         [StringLength(2000)]
         public string msg { get; set; }
+        /// <summary>
+        /// 失物地点
+        /// </summary>
+        [Required]
+        [StringLength(100)]
+        public string place { get; set; }
+        /// <summary>
+        /// 失物图片
+        /// </summary>
+        [Required]
+        [StringLength(2000)]
+        public string imageUrl { get; set; }
         /// <summary>
         /// 发布日期
         /// </summary>

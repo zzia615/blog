@@ -145,9 +145,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Controllers\DeviceController.cs" />
-    <Compile Include="Migrations\202011201143028_init-Database.cs" />
-    <Compile Include="Migrations\202011201143028_init-Database.Designer.cs">
-      <DependentUpon>202011201143028_init-Database.cs</DependentUpon>
+    <Compile Include="Migrations\202104060729034_init-Database.cs" />
+    <Compile Include="Migrations\202104060729034_init-Database.Designer.cs">
+      <DependentUpon>202104060729034_init-Database.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Damage.cs" />
@@ -215,8 +215,8 @@
     <Content Include="Views\Map\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202011201143028_init-Database.resx">
-      <DependentUpon>202011201143028_init-Database.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202104060729034_init-Database.resx">
+      <DependentUpon>202104060729034_init-Database.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

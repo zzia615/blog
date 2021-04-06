@@ -30,6 +30,20 @@ namespace jyfangyy.Main.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public ActionResult UploadImage()
+        {
+            if(Request.Files.Count<=0)
+            {
+                return Json(new { code = "0001", msg = "未找到文件信息" });
+            }
+            var file = Request.Files[0];
+            string path = Server.MapPath("/Upload");
+            string name = Guid.NewGuid().ToString() + "_" + file.FileName;
+            string fileName = System.IO.Path.Combine(path, name);
+            file.SaveAs(fileName);
+            return Json(new { code = "0000", msg = "",imageUrl= "/Upload/"+ name });
+        }
         /// <summary>
         /// 保存失物信息
         /// </summary>
@@ -45,6 +59,8 @@ namespace jyfangyy.Main.Controllers
                 data.title = loss.title;
                 data.msg = loss.msg;
                 data.status = loss.status;
+                data.imageUrl = loss.imageUrl;
+                data.place = loss.place;
                 //修改失物信息
                 dbContext.Entry(data).State = System.Data.Entity.EntityState.Modified;
                 dbContext.SaveChanges();
@@ -181,13 +197,22 @@ namespace jyfangyy.Main.Controllers
             }
             else
             {
+                
                 data.status = 2;
                 data.user_code = Session["user_code"].AsString();
                 data.user_name = Session["user_name"].AsString();
                 data.user_type = Session["user_type"].AsString();
                 data.gotDate = DateTime.Now;
-                dbContext.Entry(data).State = System.Data.Entity.EntityState.Modified;
-                dbContext.SaveChanges();
+
+                if (data.pub_user_code == data.user_code)
+                {
+                    obj = new { code = "0002", msg = "申领人不能是发布人自己" };
+                }
+                else
+                {
+                    dbContext.Entry(data).State = System.Data.Entity.EntityState.Modified;
+                    dbContext.SaveChanges();
+                }
             }
             return Json(obj);
         }

@@ -10,7 +10,7 @@ namespace jyfangyy.Main.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = false;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(jyfangyy.Main.Data.SqlDbContext context)

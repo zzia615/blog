@@ -1,4 +1,4 @@
-namespace jyfangyy.Main.Migrations
+﻿namespace jyfangyy.Main.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;
@@ -76,6 +76,8 @@ namespace jyfangyy.Main.Migrations
                         id = c.Int(nullable: false, identity: true),
                         title = c.String(nullable: false, maxLength: 100),
                         msg = c.String(nullable: false, maxLength: 2000),
+                        place = c.String(nullable: false, maxLength: 100),
+                        imageUrl = c.String(nullable: false, maxLength: 2000),
                         publishDate = c.DateTime(nullable: false),
                         status = c.Int(nullable: false),
                         gotDate = c.DateTime(),

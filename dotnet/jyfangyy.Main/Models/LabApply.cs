@@ -132,6 +132,99 @@ namespace jyfangyy.Main.Models
 
             }
         }
+        [NotMapped]
+        public int plan_sjd1
+        {
+            get
+            {
+                if (plan_sjd.Contains("-"))
+                {
+                    var arr = plan_sjd.Split('-');
+                    return arr[0].AsInt(); ;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+        [NotMapped]
+        public int plan_sjd2
+        {
+            get
+            {
+                if (plan_sjd.Contains("-"))
+                {
+                    var arr = plan_sjd.Split('-');
+                    return arr[1].AsInt();
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+        /*<el-option label = "上午-第一节" value="1"></el-option>
+          <el-option label = "上午-第二节" value="2"></el-option>
+          <el-option label = "上午-第三节" value="3"></el-option>
+          <el-option label = "上午-第四节" value="4"></el-option>
+          <el-option label = "上午-第五节" value="5"></el-option>
+          <el-option label = "下午-第六节" value="6"></el-option>
+          <el-option label = "下午-第七节" value="7"></el-option>
+          <el-option label = "下午-第八节" value="8"></el-option>
+          <el-option label = "下午-第九节" value="9"></el-option>
+          <el-option label = "晚上-第十节" value="10"></el-option>
+          <el-option label = "晚上-第十一节" value="11"></el-option>
+          <el-option label = "晚上-第十二节" value="12"></el-option>*/
+        string GetPlanSJD(string number)
+        {
+            switch (number)
+            {
+                case "1":
+                    return "上午-第一节";
+                case "2":
+                    return "上午-第二节";
+                case "3":
+                    return "上午-第三节";
+                case "4":
+                    return "上午-第四节";
+                case "5":
+                    return "上午-第五节";
+                case "6":
+                    return "下午-第六节";
+                case "7":
+                    return "下午-第七节";
+                case "8":
+                    return "下午-第八节";
+                case "9":
+                    return "下午-第九节";
+                case "10":
+                    return "晚上-第十节";
+                case "11":
+                    return "晚上-第十一节";
+                case "12":
+                    return "晚上-第十二节";
+            }
+            return number;
+        }
+
+        [NotMapped]
+        public string plan_sjd_n
+        {
+            get
+            {
+                if (plan_sjd.Contains("-"))
+                {
+                    var arr = plan_sjd.Split('-');
+                    return string.Format("{0}到{1}", GetPlanSJD(arr[0]), GetPlanSJD(arr[1]));
+                }
+                else
+                {
+                    return plan_sjd;
+                }
+            }
+        }
+
 
         [NotMapped]
         public string action { get; set; }

@@ -212,11 +212,12 @@
 
             },
             getData1(pageIndex, pageSize) {
-                var url = "/Damage/GetDamageListByDevice";
+                var url = "/Damage/GetDamageList";
                 var data = {
                     pageIndex: pageIndex,
                     pageSize: pageSize,
-                    code: this.selectedDeviceCode
+                    code: this.selectedDeviceCode,
+                    status: 2
                 };
                 this.$http.post(url, data).then(res => {
                     this.tableData4 = res.body.data;

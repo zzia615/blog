@@ -51,8 +51,14 @@ namespace jyfangyy.Main.Controllers
         public bool CheckLabUsable(LabApply apply)
         {
             //查询是否存在已审核的实验室/设备申请
-            var data = dbContext.LabApply.Where(a => a.code == apply.code && a.plan_date == apply.plan_date && a.plan_sjd == apply.plan_sjd && a.status == 2&&a.mode==apply.mode).ToList();
-            if (data.Count > 0) return false;
+            var data = dbContext.LabApply.Where(a => a.code == apply.code && a.plan_date == apply.plan_date & a.status == 2&&a.mode==apply.mode).ToList();
+            {
+                int cc = data.Where(a => a.plan_sjd1 >= apply.plan_sjd1&& a.plan_sjd1 <= apply.plan_sjd2 || a.plan_sjd2 >= apply.plan_sjd1&& a.plan_sjd2 <= apply.plan_sjd2).ToList().Count;
+                if (cc > 0)
+                {
+                    return false;
+                }
+            }
             if (apply.mode == "机房预约")
             {
                 //机房预约需要校验预约时间和时间段内是否有人预约了单个座位
@@ -62,9 +68,12 @@ namespace jyfangyy.Main.Controllers
                           from b in dbContext.Device
                           from c in dbContext.LabApply
                           where a.code == b.laboratory_code & b.code == c.code & c.status == 2 & c.mode == "座位预约"
-                          & c.plan_date == apply.plan_date & c.plan_sjd == apply.plan_sjd & a.code == apply.code
+                          & c.plan_date == apply.plan_date & a.code == apply.code
                           select c;
-                if (tmp.Count() > 0)
+
+                var tmpList = tmp.ToList();
+                int cc = tmpList.Where(a => a.plan_sjd1 >= apply.plan_sjd1 && a.plan_sjd1 <= apply.plan_sjd2 || a.plan_sjd2 >= apply.plan_sjd1 && a.plan_sjd2 <= apply.plan_sjd2).ToList().Count;
+                if (cc > 0)
                 {
                     return false;
                 }
@@ -85,9 +94,11 @@ namespace jyfangyy.Main.Controllers
                               from b in dbContext.Device
                               from c in dbContext.LabApply
                               where a.code == b.laboratory_code & a.code == c.code & c.status == 2 & c.mode == "机房预约"
-                              & c.plan_date == apply.plan_date & c.plan_sjd == apply.plan_sjd & a.code == apply.code
+                              & c.plan_date == apply.plan_date & a.code == apply.code
                               select c;
-                    if (tmp.Count() > 0)
+                    var tmpList = tmp.ToList();
+                    int cc = tmpList.Where(a => a.plan_sjd1 >= apply.plan_sjd1 && a.plan_sjd1 <= apply.plan_sjd2 || a.plan_sjd2 >= apply.plan_sjd1 && a.plan_sjd2 <= apply.plan_sjd2).ToList().Count;
+                    if (cc > 0)
                     {
                         return false;
                     }

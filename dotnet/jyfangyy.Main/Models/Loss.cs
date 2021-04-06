@@ -8,7 +8,7 @@ using System.Web;
 namespace jyfangyy.Main.Models
 {
     /// <summary>
-    /// 失物信息
+    /// 失物名称
     /// </summary>
     [Table("Loss")]
     public class Loss

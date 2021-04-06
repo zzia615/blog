@@ -53,7 +53,7 @@ namespace jyfangyy.Main.Controllers
             //查询是否存在已审核的实验室/设备申请
             var data = dbContext.LabApply.Where(a => a.code == apply.code && a.plan_date == apply.plan_date & a.status == 2&&a.mode==apply.mode).ToList();
             {
-                int cc = data.Where(a => a.plan_sjd1 >= apply.plan_sjd1&& a.plan_sjd1 <= apply.plan_sjd2 || a.plan_sjd2 >= apply.plan_sjd1&& a.plan_sjd2 <= apply.plan_sjd2).ToList().Count;
+                int cc = data.Where(a => a.plan_sjd1_i >= apply.plan_sjd1_i && a.plan_sjd1_i <= apply.plan_sjd2_i || a.plan_sjd2_i >= apply.plan_sjd1_i && a.plan_sjd2_i <= apply.plan_sjd2_i).ToList().Count;
                 if (cc > 0)
                 {
                     return false;
@@ -72,7 +72,7 @@ namespace jyfangyy.Main.Controllers
                           select c;
 
                 var tmpList = tmp.ToList();
-                int cc = tmpList.Where(a => a.plan_sjd1 >= apply.plan_sjd1 && a.plan_sjd1 <= apply.plan_sjd2 || a.plan_sjd2 >= apply.plan_sjd1 && a.plan_sjd2 <= apply.plan_sjd2).ToList().Count;
+                int cc = tmpList.Where(a => a.plan_sjd1_i >= apply.plan_sjd1_i && a.plan_sjd1_i <= apply.plan_sjd2_i || a.plan_sjd2_i >= apply.plan_sjd1_i && a.plan_sjd2_i <= apply.plan_sjd2_i).ToList().Count;
                 if (cc > 0)
                 {
                     return false;
@@ -97,7 +97,7 @@ namespace jyfangyy.Main.Controllers
                               & c.plan_date == apply.plan_date & a.code == apply.code
                               select c;
                     var tmpList = tmp.ToList();
-                    int cc = tmpList.Where(a => a.plan_sjd1 >= apply.plan_sjd1 && a.plan_sjd1 <= apply.plan_sjd2 || a.plan_sjd2 >= apply.plan_sjd1 && a.plan_sjd2 <= apply.plan_sjd2).ToList().Count;
+                    int cc = tmpList.Where(a => a.plan_sjd1_i >= apply.plan_sjd1_i && a.plan_sjd1_i <= apply.plan_sjd2_i || a.plan_sjd2_i >= apply.plan_sjd1_i && a.plan_sjd2_i <= apply.plan_sjd2_i).ToList().Count;
                     if (cc > 0)
                     {
                         return false;

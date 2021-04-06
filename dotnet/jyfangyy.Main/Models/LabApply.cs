@@ -133,35 +133,53 @@ namespace jyfangyy.Main.Models
             }
         }
         [NotMapped]
-        public int plan_sjd1
+        public string plan_sjd1
         {
             get
             {
                 if (plan_sjd.Contains("-"))
                 {
                     var arr = plan_sjd.Split('-');
-                    return arr[0].AsInt(); ;
+                    return arr[0].AsString(); ;
                 }
                 else
                 {
-                    return 0;
+                    return "";
+                }
+            }
+        }
+
+        [NotMapped]
+        public int plan_sjd1_i
+        {
+            get
+            {
+                return plan_sjd1.AsInt();
+            }
+        }
+
+        [NotMapped]
+        public string plan_sjd2
+        {
+            get
+            {
+                if (plan_sjd.Contains("-"))
+                {
+                    var arr = plan_sjd.Split('-');
+                    return arr[1].AsString();
+                }
+                else
+                {
+                    return "";
                 }
             }
         }
         [NotMapped]
-        public int plan_sjd2
+        public int plan_sjd2_i
         {
             get
             {
-                if (plan_sjd.Contains("-"))
-                {
-                    var arr = plan_sjd.Split('-');
-                    return arr[1].AsInt();
-                }
-                else
-                {
-                    return 0;
-                }
+                return plan_sjd2.AsInt();
             }
         }
         /*<el-option label = "上午-第一节" value="1"></el-option>

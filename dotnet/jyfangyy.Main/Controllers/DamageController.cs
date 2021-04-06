@@ -28,7 +28,7 @@ namespace jyfangyy.Main.Controllers
             return View();
         }
         /// <summary>
-        /// 保存失物信息
+        /// 保存失物名称
         /// </summary>
         /// <param name="loss"></param>
         /// <returns></returns>
@@ -105,7 +105,7 @@ namespace jyfangyy.Main.Controllers
             var data = dbContext.Damage.Find(id);
             if (data == null)
             {
-                obj = new { code = "0001", msg = "未找到失物信息" };
+                obj = new { code = "0001", msg = "未找到失物名称" };
             }
             else
             {

@@ -100,7 +100,7 @@
                         <template slot="title">
                             <i class="el-icon-reading"></i>失物管理
                         </template>
-                        <el-menu-item index="4-1">失物信息发布</el-menu-item>
+                        <el-menu-item index="4-1">失物名称发布</el-menu-item>
 
                         @if (Model.type == "2" || Model.type == "3")
                         {
@@ -318,10 +318,10 @@
                         case "3-2":  //机房使用情况查询
                             this.mainFrameUrl = "/Report/LabUse";
                             break;
-                        case "4-1"://失物信息发布
+                        case "4-1"://失物名称发布
                             this.mainFrameUrl = "/Loss/Index";
                             break;
-                        case "4-2"://失物信息申领
+                        case "4-2"://失物名称申领
                             this.mainFrameUrl = "/Loss/Apply";
                             break;
                         case "4-3"://我的申领记录

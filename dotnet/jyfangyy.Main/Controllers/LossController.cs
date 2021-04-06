@@ -45,7 +45,7 @@ namespace jyfangyy.Main.Controllers
             return Json(new { code = "0000", msg = "",imageUrl= "/Upload/"+ name });
         }
         /// <summary>
-        /// 保存失物信息
+        /// 保存失物名称
         /// </summary>
         /// <param name="loss"></param>
         /// <returns></returns>
@@ -61,7 +61,7 @@ namespace jyfangyy.Main.Controllers
                 data.status = loss.status;
                 data.imageUrl = loss.imageUrl;
                 data.place = loss.place;
-                //修改失物信息
+                //修改失物名称
                 dbContext.Entry(data).State = System.Data.Entity.EntityState.Modified;
                 dbContext.SaveChanges();
             }
@@ -143,7 +143,7 @@ namespace jyfangyy.Main.Controllers
             var data = dbContext.Loss.Find(id);
             if (data == null)
             {
-                obj = new { code = "0001", msg = "未找到失物信息" };
+                obj = new { code = "0001", msg = "未找到失物名称" };
             }
             else
             {
@@ -159,7 +159,7 @@ namespace jyfangyy.Main.Controllers
             var data = dbContext.Loss.Find(id);
             if (data == null)
             {
-                obj = new { code = "0001", msg = "未找到失物信息" };
+                obj = new { code = "0001", msg = "未找到失物名称" };
             }
             else
             {
@@ -176,7 +176,7 @@ namespace jyfangyy.Main.Controllers
             var data = dbContext.Loss.Find(id);
             if (data == null)
             {
-                obj = new { code = "0001", msg = "未找到失物信息" };
+                obj = new { code = "0001", msg = "未找到失物名称" };
             }
             else
             {
@@ -193,7 +193,7 @@ namespace jyfangyy.Main.Controllers
             var data = dbContext.Loss.Find(id);
             if (data == null)
             {
-                obj = new { code = "0001", msg = "未找到失物信息" };
+                obj = new { code = "0001", msg = "未找到失物名称" };
             }
             else
             {

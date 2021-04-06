@@ -82,14 +82,48 @@
         <el-form-item label="预约日期" prop="plan_date">
             <el-date-picker v-model="form.plan_date"
                             type="date"
+                            :picker-options='pickerBeginDateBefore'
                             placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width:100%">
             </el-date-picker>
         </el-form-item>
-        <el-form-item label="预约时段" prop="plan_sjd">
-            <el-select v-model="form.plan_sjd" placeholder="请选择预约时段" style="width:100%">
-                <el-option label="上午" value="上午"></el-option>
-                <el-option label="下午" value="下午"></el-option>
-            </el-select>
+        <el-form-item label="预约时段">
+            <el-col :span="11">
+                <el-form-item prop="plan_sjd1">
+                    <el-select v-model="form.plan_sjd1" placeholder="请选择预约时段" style="width:100%">
+                        <el-option label="上午-第一节" value="1"></el-option>
+                        <el-option label="上午-第二节" value="2"></el-option>
+                        <el-option label="上午-第三节" value="3"></el-option>
+                        <el-option label="上午-第四节" value="4"></el-option>
+                        <el-option label="上午-第五节" value="5"></el-option>
+                        <el-option label="下午-第六节" value="6"></el-option>
+                        <el-option label="下午-第七节" value="7"></el-option>
+                        <el-option label="下午-第八节" value="8"></el-option>
+                        <el-option label="下午-第九节" value="9"></el-option>
+                        <el-option label="晚上-第十节" value="10"></el-option>
+                        <el-option label="晚上-第十一节" value="11"></el-option>
+                        <el-option label="晚上-第十二节" value="12"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col class="line" :span="2">-</el-col>
+            <el-col :span="11">
+                <el-form-item prop="plan_sjd2">
+                    <el-select v-model="form.plan_sjd2" placeholder="请选择预约时段" style="width:100%">
+                        <el-option label="上午-第一节" value="1"></el-option>
+                        <el-option label="上午-第二节" value="2"></el-option>
+                        <el-option label="上午-第三节" value="3"></el-option>
+                        <el-option label="上午-第四节" value="4"></el-option>
+                        <el-option label="上午-第五节" value="5"></el-option>
+                        <el-option label="下午-第六节" value="6"></el-option>
+                        <el-option label="下午-第七节" value="7"></el-option>
+                        <el-option label="下午-第八节" value="8"></el-option>
+                        <el-option label="下午-第九节" value="9"></el-option>
+                        <el-option label="晚上-第十节" value="10"></el-option>
+                        <el-option label="晚上-第十一节" value="11"></el-option>
+                        <el-option label="晚上-第十二节" value="12"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
         </el-form-item>
         <el-form-item label="使用说明" prop="remark">
             <el-input v-model="form.remark"></el-input>
@@ -107,6 +141,11 @@
         el: '#app',
         data() {
             return {
+                pickerBeginDateBefore: {
+                    disabledDate(time) {
+                        return time.getTime() < Date.now() - 8.64e7;   //如果当天可选，就不用减8.64e7
+                    }
+                },
                 tableData3: [],
                 totalNum: 100,
                 pageSize: 10,
@@ -122,6 +161,8 @@
                     code: '',
                     plan_date: '',
                     plan_sjd: '',
+                    plan_sjd1: '',
+                    plan_sjd2: '',
                     remark:''
                 },
                 formQuery: {
@@ -138,7 +179,12 @@
                         message: '请选择预约日期',
                         trigger: 'blur'
                     }],
-                    plan_sjd: [{
+                    plan_sjd1: [{
+                        required: true,
+                        message: '请选择预约时段',
+                        trigger: 'blur'
+                    }],
+                    plan_sjd2: [{
                         required: true,
                         message: '请选择预约时段',
                         trigger: 'blur'
@@ -164,6 +210,8 @@
                     code: '',
                     plan_date: '',
                     plan_sjd: '',
+                    plan_sjd1: '',
+                    plan_sjd2: '',
                     remark: ''
                 };
             },
@@ -179,6 +227,12 @@
                         } else {
                             data.action = "addLabApply";
                         }
+                        if (parseInt(data.plan_sjd1) > parseInt(data.plan_sjd2)) {
+                            this.dialogLoading = false;
+                            this.$message.error("预约时间段的开始时间不能大于结束时间");
+                            return;
+                        }
+                        data.plan_sjd = data.plan_sjd1 + "-" + data.plan_sjd2;
                         data.mode = '座位预约';
                         for (var s in this.deviceList) {
                             if (this.deviceList[s].code == data.code) {

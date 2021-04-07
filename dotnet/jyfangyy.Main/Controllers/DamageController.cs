@@ -44,6 +44,7 @@ namespace jyfangyy.Main.Controllers
                 data.code = damage.code;
                 data.name = damage.name;
                 data.status = damage.status;
+                data.imageUrl = damage.imageUrl;
                 //修改破损信息
                 dbContext.Entry(data).State = System.Data.Entity.EntityState.Modified;
                 dbContext.SaveChanges();

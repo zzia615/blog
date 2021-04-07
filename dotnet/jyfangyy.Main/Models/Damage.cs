@@ -33,6 +33,12 @@ namespace jyfangyy.Main.Models
         [StringLength(2000)]
         public string msg { get; set; }
         /// <summary>
+        /// 图片网址
+        /// </summary>
+        [Required]
+        [StringLength(2000)]
+        public string imageUrl { get; set; }
+        /// <summary>
         /// 设备编号
         /// </summary>
         [Required]

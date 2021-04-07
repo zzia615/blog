@@ -145,6 +145,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Controllers\DeviceController.cs" />
+    <Compile Include="Migrations\202104070053150_init-Database.cs" />
+    <Compile Include="Migrations\202104070053150_init-Database.Designer.cs">
+      <DependentUpon>202104070053150_init-Database.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Damage.cs" />
     <Compile Include="Models\Device.cs" />
@@ -210,6 +214,11 @@
     <Content Include="Views\Damage\Check.cshtml" />
     <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
     <Content Include="Views\Map\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202104070053150_init-Database.resx">
+      <DependentUpon>202104070053150_init-Database.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
